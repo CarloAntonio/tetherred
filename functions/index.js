@@ -14,9 +14,10 @@ admin.initializeApp(functions.config().firebase);
 //         })
 // }
 
-const createEventAuxDetails = event => {
+const createEventAuxDetails = (eventAuxId, eventAuxDetails) => {
     return admin.firestore().collection('eventAuxDetails')
-        .add(event)
+        .doc(eventAuxId)
+        .set(eventAuxDetails)
         .then(doc => {
             console.log('event added', doc)
             return null;
@@ -27,14 +28,15 @@ const createEventAuxDetails = event => {
         });
 }
 
-exports.projectCreated = functions.firestore
+exports.eventCreated = functions.firestore
     .document('event/{eventId}')
-    .onCreate(doc => {
+    .onCreate((doc, context) => {
         const data = doc.data();
-        const event = {
+        const eventAuxId = context.params.eventId;
+        const eventAuxDetails = {
             host: [data.creator]
         }
-        return createEventAuxDetails(event);
+        return createEventAuxDetails(eventAuxId, eventAuxDetails);
     });
 
 // exports.userJoined = functions.auth.user()
