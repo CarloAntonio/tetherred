@@ -12,12 +12,23 @@ import { reduxFirestore, getFirestore } from 'redux-firestore';
 import { reactReduxFirebase, getFirebase } from 'react-redux-firebase';
 import fbConfig from './config/fbConfig';
 
+const enhancers = []
+
+if (process.env.NODE_ENV === 'development') {
+    const devToolsExtension = window.devToolsExtension
+
+    if (typeof devToolsExtension === 'function') {
+        enhancers.push(devToolsExtension())
+    }
+}
+
 const store = createStore(
     rootReducer, 
     compose(
         applyMiddleware(thunk.withExtraArgument({getFirebase, getFirestore})),
         reduxFirestore(fbConfig),
-        reactReduxFirebase(fbConfig, {useFirestoreForProfile: true, userProfile: 'userMinDetails', attachAuthIsReady: true})
+        reactReduxFirebase(fbConfig, {useFirestoreForProfile: true, userProfile: 'userMinDetails', attachAuthIsReady: true}),
+        ...enhancers
     )
 );
 

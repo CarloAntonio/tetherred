@@ -5,7 +5,7 @@ import {compose } from 'redux'
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 
-const ProjectDetails = (props) => {
+const EventDetails = (props) => {
     const { project, auth } = props;
     if (!auth.uid) return <Redirect to='/signin' />
 
@@ -34,9 +34,9 @@ const ProjectDetails = (props) => {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const id = ownProps.match.params.id;
-    const projects = state.firestore.data.projects;
-    const project = projects ? projects[id] : null
+    // const id = ownProps.match.params.id;
+    // const projects = state.firestore.data.projects;
+    // const project = projects ? projects[id] : null
 
     return {
         project: project,
@@ -46,7 +46,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default compose(
     connect(mapStateToProps),
-    firestoreConnect([
-        { collection: 'projects'}
-    ])
-)(ProjectDetails);
+    // firestoreConnect([
+    //     { collection: 'projects'}
+    // ])
+)(EventDetails);
