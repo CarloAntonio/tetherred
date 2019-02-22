@@ -8,7 +8,6 @@ import { Redirect } from 'react-router-dom';
 import EventList from '../projects/EventList';
 
 class Dashboard extends Component {
-
     render () {
         const { events, eventDetails, auth } = this.props;
 
@@ -40,19 +39,25 @@ const mapStateToProps = state => {
 export default compose(
     connect(mapStateToProps),
     firestoreConnect(props => {
-        // create a query array
-        const queryArr = [{ collection: 'eventAuxDetails', where: ['members', 'array-contains', props.auth.uid]}];
+        console.log(props);
+        if(props.auth.isLoaded && !props.auth.isEmpty) {
+            console.log('hello');
+            // create a query array
+            const queryArr = [{ collection: 'eventAuxDetails', where: ['members', 'array-contains', props.auth.uid]}];
 
-        // push to query array as needed for multiple events
-        if(props.eventDetails) {
-            Object.keys(props.eventDetails).map(event => {
-                queryArr.push({
-                    collection: 'event', doc: event
+            // push to query array as needed for multiple events
+            if(props.eventDetails) {
+                Object.keys(props.eventDetails).map(event => {
+                    queryArr.push({
+                        collection: 'event', doc: event
+                    })
                 })
-            })
-        }
+            }
 
-        // return query array
-        return queryArr;
+            // return query array
+            return queryArr;
+        } else {
+            return [];
+        }
     })
 )(Dashboard);
