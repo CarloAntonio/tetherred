@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 // import Notifications from './Notifications';
-//import ProjectList from '../projects/ProjectList';
+import EventList from '../projects/EventList';
 
 class Dashboard extends Component {
 
@@ -17,10 +17,9 @@ class Dashboard extends Component {
         return (
             <div className="dashboard container">
                 <div className="row">
-                <h1>Hello World</h1>
-                    {/* <div className="col s12 m6">
-                        <ProjectList projects={events}/>
-                    </div> */}
+                    <div className="col s12 m6">
+                        <EventList events={events}/>
+                    </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications notifications={notifications}/>
                     </div> */}

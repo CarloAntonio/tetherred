@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import { createEvent } from '../../store/actions/eventActions';
 
-class CreateProject extends Component {
+class CreateEvent extends Component {
     state = {
         title: '',
         description: '',
@@ -68,4 +68,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateProject);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateEvent);

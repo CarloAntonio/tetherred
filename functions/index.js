@@ -34,7 +34,8 @@ exports.eventCreated = functions.firestore
         const data = doc.data();
         const eventAuxId = context.params.eventId;
         const eventAuxDetails = {
-            host: [data.creator]
+            host: [data.creator],
+            members: [data.creator]
         }
         return createEventAuxDetails(eventAuxId, eventAuxDetails);
     });
