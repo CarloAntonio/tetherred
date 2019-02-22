@@ -1,22 +1,22 @@
+import * as actionTypes from '../actionTypes';
 
-const initState = {
-    projects: [
-        {id: '1', title: 'help me find peach', content: 'blah blah blah'},
-        {id: '2', title: 'collect all the stars', content: 'blah blah blah'},
-        {id: '3', title: 'egg hunt with yoshi', content: 'blah blah blah'},
-    ]
+const initState = {};
+
+const createEvent = (state, action) => {
+    console.log('created project', action.project);
+    return state;
+}
+
+const createEventError = (state, action) => {
+    console.log('create project error', action.err);
+    return state;
 }
 
 const projectReducer = (state = initState, action) => {
     switch (action.type) {
-        case 'CREATE_PROJECT':
-            console.log('created project', action.project);
-            return state;
-        case 'CREATE_PROJECT_ERROR':
-            console.log('create project error', action.err);
-            return state;
-        default: 
-            return state;
+        case actionTypes.CREATE_EVENT: return createEvent(state, action);
+        case actionTypes.CREATE_EVENT_ERROR: return createEventError(state, action);
+        default: return state;
     }
 }
 

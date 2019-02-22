@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import { createProject } from '../../store/actions/projectActions';
+import { createEvent } from '../../store/actions/eventActions';
 
 class CreateProject extends Component {
     state = {
         title: '',
-        content: '',
+        description: '',
+        location: '',
+        type: 'private'
     }
 
     handleChange = (e) => {
@@ -18,7 +20,7 @@ class CreateProject extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.createProject(this.state);
+        this.props.createEvent(this.state);
         this.props.history.push('/');
     }
 
@@ -31,14 +33,18 @@ class CreateProject extends Component {
             <div>
                 <div className="container">
                     <form onSubmit={this.handleSubmit} className="white">
-                        <h5 className="grey-text text-darken-3">Create New Project</h5>
+                        <h5 className="grey-text text-darken-3">Create New Event</h5>
                         <div className="input-field">
                             <label htmlFor="title">Title</label>
                             <input type="text" id='title' onChange={this.handleChange}/>
                         </div>
                         <div className="input-field">
-                            <label htmlFor="content">Content</label>
-                            <textarea id="content" className="materialize-textarea" onChange={this.handleChange}></textarea>
+                            <label htmlFor="description">Description</label>
+                            <textarea id="description" className="materialize-textarea" onChange={this.handleChange}></textarea>
+                        </div>
+                        <div className="input-field">
+                            <label htmlFor="location">Location</label>
+                            <textarea id="location" className="materialize-textarea" onChange={this.handleChange}></textarea>
                         </div>
                         <div className="input-field">
                             <button className="btn pink lighten-1 z-depth-0">Create</button>
@@ -58,7 +64,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        createProject: project => dispatch(createProject(project))
+        createEvent: project => dispatch(createEvent(project))
     }
 }
 

@@ -10,7 +10,7 @@ import { Redirect } from 'react-router-dom';
 class Dashboard extends Component {
 
     render () {
-        const { events, auth } = this.props;
+        const { events, eventDetails, auth } = this.props;
 
         if(!auth.uid) return <Redirect to="/signin" />
 
@@ -31,18 +31,29 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state);
     return {
-        events: state.firestore.ordered.projects,
+        events: state.firestore.data.event,
         auth: state.firebase.auth,
-        //notifications: state.firestore.ordered.notifications
+        eventDetails: state.firestore.data.eventAuxDetails,
     }
 }
 
 export default compose(
     connect(mapStateToProps),
-    firestoreConnect([
-        { collection: 'event', orderBy: ['startDate', 'desc'] },
-        // { collection: 'notifications', limit: 3, orderBy: ['time', 'desc'] }
-    ])
+    firestoreConnect(props => {
+        // create a query array
+        const queryArr = [{ collection: 'eventAuxDetails', where: ['members', 'array-contains', props.auth.uid]}];
+
+        // push to query array as needed for multiple events
+        if(props.eventDetails) {
+            Object.keys(props.eventDetails).map(event => {
+                queryArr.push({
+                    collection: 'event', doc: event
+                })
+            })
+        }
+
+        // return query array
+        return queryArr;
+    })
 )(Dashboard);
