@@ -39,9 +39,7 @@ const mapStateToProps = state => {
 export default compose(
     connect(mapStateToProps),
     firestoreConnect(props => {
-        console.log(props);
         if(props.auth.isLoaded && !props.auth.isEmpty) {
-            console.log('hello');
             // create a query array
             const queryArr = [{ collection: 'eventAuxDetails', where: ['members', 'array-contains', props.auth.uid]}];
 
