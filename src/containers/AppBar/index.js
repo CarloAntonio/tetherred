@@ -15,7 +15,7 @@ import Menu from '@material-ui/core/Menu';
 import { withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
+import AddIcon from '@material-ui/icons/Add';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
@@ -101,7 +101,6 @@ class PrimarySearchAppBar extends React.Component {
         <div className={classes.sectionDesktop}>
             <Typography className='d-flex flex-row' variant="h6" color="inherit" noWrap>
                 <NavLink className={classes.signedOutLinks} to='/signin'>SignIn</NavLink>
-                <br/>
                 <NavLink className={classes.signedOutLinks} to='/signup'>Signup</NavLink>
             </Typography>
         </div>
@@ -110,9 +109,9 @@ class PrimarySearchAppBar extends React.Component {
     const signedInMenu = (
         <div className={classes.sectionDesktop}>
             <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                    <MailIcon />
-                </Badge>
+              <NavLink style={{height: 24, color: 'white', display: 'flex', alignItems: 'center'}} to='/create'>
+                <AddIcon/>
+              </NavLink>
             </IconButton>
             <IconButton color="inherit">
                 <Badge badgeContent={17} color="secondary">
@@ -150,9 +149,9 @@ class PrimarySearchAppBar extends React.Component {
         onClose={this.handleMenuClose}>
         <MenuItem onClick={this.handleMobileMenuClose}>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <MailIcon />
-            </Badge>
+            <NavLink to='/create'>
+             <AddIcon />
+            </NavLink>
           </IconButton>
           <p>Messages</p>
         </MenuItem>
@@ -180,8 +179,8 @@ class PrimarySearchAppBar extends React.Component {
             <IconButton className={classes.menuButton} color="inherit" aria-label="Open drawer">
               <MenuIcon />
             </IconButton>
-            <Typography className={classes.title} variant="h6" color="inherit" noWrap>
-              Tethered
+            <Typography className='d-flex flex-row' variant="h6" color="inherit" noWrap>
+                <NavLink className={classes.signedOutLinks} to='/'>Tetherred</NavLink>
             </Typography>
             <div className={classes.grow} />
             { auth.uid ? signedInMenu : signedOutMenu }
