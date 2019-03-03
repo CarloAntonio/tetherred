@@ -1,5 +1,5 @@
 // Libraries
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -19,7 +19,10 @@ import AddIcon from '@material-ui/icons/Add';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-// Helpers
+// Custom Components
+import CreateEventDialog from './components/createEventDialog';
+
+// Actions
 import { signOut } from '../../store/actions/authActions';
 
 const styles = theme => ({
@@ -61,10 +64,11 @@ const styles = theme => ({
   },
 });
 
-class PrimarySearchAppBar extends React.Component {
+class PrimaryAppBar extends Component {
   state = {
     anchorEl: null,
     mobileMoreAnchorEl: null,
+    showCreateEventModal: false
   };
 
   handleProfileMenuOpen = event => {
@@ -89,6 +93,18 @@ class PrimarySearchAppBar extends React.Component {
     this.props.signOut();
   }
 
+  handleShowCreateEventModal = () => {
+    this.setState({
+      showCreateEventModal: true
+    })
+  }
+
+  handleHideCreateEventModal = () => {
+    this.setState({
+      showCreateEventModal: false
+    })
+  }
+
   render() {
     const { anchorEl, mobileMoreAnchorEl } = this.state;
     const { classes, auth } = this.props;
@@ -108,10 +124,8 @@ class PrimarySearchAppBar extends React.Component {
 
     const signedInMenu = (
         <div className={classes.sectionDesktop}>
-            <IconButton color="inherit">
-              <NavLink style={{height: 24, color: 'white', display: 'flex', alignItems: 'center'}} to='/create'>
-                <AddIcon/>
-              </NavLink>
+            <IconButton color="inherit" onClick={this.handleShowCreateEventModal}>
+              <AddIcon/>
             </IconButton>
             <IconButton color="inherit">
                 <Badge badgeContent={17} color="secondary">
@@ -148,10 +162,8 @@ class PrimarySearchAppBar extends React.Component {
         open={isMobileMenuOpen}
         onClose={this.handleMenuClose}>
         <MenuItem onClick={this.handleMobileMenuClose}>
-          <IconButton color="inherit">
-            <NavLink to='/create'>
-             <AddIcon />
-            </NavLink>
+          <IconButton color="inherit" onClick={this.handleShowCreateEventModal}>
+            <AddIcon />
           </IconButton>
           <p>Messages</p>
         </MenuItem>
@@ -193,12 +205,15 @@ class PrimarySearchAppBar extends React.Component {
         </AppBar>
         {signedInMenuPopUp}
         {renderMobileMenu}
+        <CreateEventDialog 
+          showCreateEventModal={this.state.showCreateEventModal}
+          handleHideCreateEventModal={this.handleHideCreateEventModal}/>
       </div>
     );
   }
 }
 
-PrimarySearchAppBar.propTypes = {
+PrimaryAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
@@ -211,8 +226,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        signOut: () => dispatch(signOut())
+        signOut: () => dispatch(signOut()),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(PrimarySearchAppBar));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(PrimaryAppBar));

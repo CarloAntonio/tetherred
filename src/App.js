@@ -3,9 +3,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/projects/EventDetails';
-import CreateEvent from './components/projects/CreateEvent';
 
-import AppBar from './containers/AppBar';
+import PrimaryAppBar from './containers/PrimaryAppBar';
 import SignInForm from './containers/SignInForm';
 import SignUpForm from './containers/SignUpForm';
 
@@ -16,13 +15,12 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className="App">
-          <AppBar/>
+          <PrimaryAppBar/>
           <Switch>
             <Route exact path='/' component={Dashboard} />
             <Route path='/event/:id' component={EventDetails} />
             <Route path='/signin' component={SignInForm} />
             <Route path='/signup' component={SignUpForm} />
-            <Route path='/create' component={CreateEvent} />
           </Switch>
         </div>
       </BrowserRouter>
