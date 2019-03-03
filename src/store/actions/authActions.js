@@ -21,6 +21,12 @@ const loginSuccess = () => {
     }
 }
 
+export const loginReset = () => {
+    return {
+        type: actionTypes.LOGIN_RESET,
+    }
+}
+
 const loginError = (err) => {
     return {
         type: actionTypes.LOGIN_ERROR,

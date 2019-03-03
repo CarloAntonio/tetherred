@@ -18,6 +18,13 @@ const loginSuccess = (state, action) => {
     }
 }
 
+const loginReset = (state, action) => {
+    return {
+        ...state,
+        authError: null
+    }
+}
+
 const signoutSuccess = (state, action) => {
     return state;
 }
@@ -42,6 +49,7 @@ const authReducer = (state = initState, action) => {
     switch(action.type) {
         case actionTypes.LOGIN_ERROR: return loginError(state, action);
         case actionTypes.LOGIN_SUCCESS: return loginSuccess(state, action);
+        case actionTypes.LOGIN_RESET: return loginReset(state, action);
         case actionTypes.SIGNOUT_SUCCESS: return signoutSuccess(state, action);
         case actionTypes.SIGNUP_SUCCESS: return signupSuccess(state, action);
         case actionTypes.SIGNUP_ERROR: return signupError(state, action);

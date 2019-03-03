@@ -8,6 +8,9 @@ import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import CreateEvent from './components/projects/CreateEvent';
 
+import AppBar from './containers/AppBar';
+import SignInForm from './containers/SignInForm';
+
 import './App.css';
 
 class App extends Component {
@@ -15,11 +18,11 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className="App">
-          <Navbar/>
+          <AppBar/>
           <Switch>
             <Route exact path='/' component={Dashboard} />
             <Route path='/event/:id' component={EventDetails} />
-            <Route path='/signin' component={SignIn} />
+            <Route path='/signin' component={SignInForm} />
             <Route path='/signup' component={SignUp} />
             <Route path='/create' component={CreateEvent} />
           </Switch>
