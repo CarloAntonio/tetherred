@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Navbar from './components/layouts/Navbar';
 import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/projects/EventDetails';
-import SignIn from './components/auth/SignIn';
-import SignUp from './components/auth/SignUp';
 import CreateEvent from './components/projects/CreateEvent';
 
 import AppBar from './containers/AppBar';
 import SignInForm from './containers/SignInForm';
+import SignUpForm from './containers/SignUpForm';
 
 import './App.css';
 
@@ -23,7 +21,7 @@ class App extends Component {
             <Route exact path='/' component={Dashboard} />
             <Route path='/event/:id' component={EventDetails} />
             <Route path='/signin' component={SignInForm} />
-            <Route path='/signup' component={SignUp} />
+            <Route path='/signup' component={SignUpForm} />
             <Route path='/create' component={CreateEvent} />
           </Switch>
         </div>

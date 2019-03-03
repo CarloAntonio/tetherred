@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
+
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -17,7 +18,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 // Actions
-import { signIn, loginReset } from '../../store/actions/authActions';
+import { signUp, loginReset } from '../../store/actions/authActions';
+
 
 const styles = theme => ({
   container: {
@@ -29,17 +31,21 @@ const styles = theme => ({
   },
 });
 
-class SignInForm extends Component  {
+class SignUpForm extends Component  {
   state = {
     email: '',
     password: '',
+    firstName: '',
+    lastName: '',
     showPassword: false,
   }
 
-  handleLogin = () => {
-    this.props.signIn({
+  handleSubmit = () => {
+    this.props.signUp({
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName
     });
   }
 
@@ -60,6 +66,22 @@ class SignInForm extends Component  {
     return (
       <div className='container pt-5'>
         <div className="row d-flex flex-column align-items-center">
+          <TextField
+            label="First Name"
+            id="firstName"
+            value={this.state.firstName}
+            onChange={this.handleChange}
+            className='col-4 pb-3'
+            helperText="Please enter your first name"/>
+  
+          <TextField
+            label="Last Name"
+            id="lastName"
+            value={this.state.lastName}
+            onChange={this.handleChange}
+            className='col-4 pb-3'
+            helperText="Please enter last name"/>
+
           <TextField
             label="Email Address"
             id="email"
@@ -87,13 +109,13 @@ class SignInForm extends Component  {
                 </InputAdornment>
               }/>
           </FormControl>
-  
+
           <Button 
             variant="contained" 
             color="primary" 
-            onClick={this.handleLogin}
+            onClick={this.handleSubmit}
             className={classes.button}>
-            Login
+            Sign Up
           </Button>  
 
           <Snackbar
@@ -112,22 +134,22 @@ class SignInForm extends Component  {
   };
 }
 
-SignInForm.propTypes = {
+SignUpForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-      authError: state.auth.authError,
-      auth: state.firebase.auth
+    authError: state.auth.authError,
+    auth: state.firebase.auth
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-      signIn: cred => dispatch(signIn(cred)),
-      loginReset: () => dispatch(loginReset()),
+    signUp: newUser => dispatch(signUp(newUser)),
+    loginReset: () => dispatch(loginReset()),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SignInForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SignUpForm));

@@ -12,7 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { fade } from '@material-ui/core/styles/colorManipulator';
 import { withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -86,7 +85,8 @@ class PrimarySearchAppBar extends React.Component {
   };
 
   handleSignout = () => {
-      this.props.signOut();
+    this.handleMenuClose();
+    this.props.signOut();
   }
 
   render() {
