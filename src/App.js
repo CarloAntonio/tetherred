@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Dashboard from './components/dashboard/Dashboard';
+//import Dashboard from './components/dashboard/Dashboard';
 import EventDetails from './components/projects/EventDetails';
 
 import PrimaryAppBar from './containers/PrimaryAppBar';
 import SignInForm from './containers/SignInForm';
 import SignUpForm from './containers/SignUpForm';
+import Dashboard from './containers/Dashboard';
 
 import './App.css';
 

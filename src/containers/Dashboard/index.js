@@ -5,11 +5,13 @@ import { compose } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 // import Notifications from './Notifications';
-import EventList from '../projects/EventList';
+import EventList from './components/EventList';
 
 class Dashboard extends Component {
     render () {
         const { events, eventDetails, auth } = this.props;
+
+        console.log(this.props);
 
         if(!auth.uid) return <Redirect to="/signin" />
 
