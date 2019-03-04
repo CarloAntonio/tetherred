@@ -16,10 +16,13 @@ class Dashboard extends Component {
         if(!auth.uid) return <Redirect to="/signin" />
 
         return (
-            <div className="container">
+            <div className='container mt-3'>
                 <div className="row">
-                    <div className="col-6 mt-5">
+                    <div className='col-8'>
                         <EventList events={events}/>
+                    </div>
+                    <div className="col-4">
+                        <h1>Notifications</h1>
                     </div>
                     {/* <div className="col s12 m5 offset-m1">
                         <Notifications notifications={notifications}/>
