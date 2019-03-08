@@ -5,6 +5,7 @@ import {compose } from 'redux'
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 // Material UI
 import { withStyles } from '@material-ui/core/styles';
@@ -20,7 +21,17 @@ const styles = theme => ({
   });
 
 class EventDashboard extends Component {
+    componentDidMount() {
+        // get the event id
+        console.log(this.props.location.pathname.split('/')[2]);
+    }
+
+    onDragEnd = result => {
+        //TODO
+    }
     render() {
+        console.log(this.props);
+        
         const { event, eventDetails, auth, classes } = this.props;
 
         // Guards
@@ -30,17 +41,19 @@ class EventDashboard extends Component {
         if (eventDetails) {
             return (
                 <div className="container mt-3">
-                    <Paper className={classes.root} elevation={1}>
-                        <Typography variant="h5" component="h3">
-                        {event.title}
-                        </Typography>
-                        <Typography component="p">
-                        {event.description}
-                        </Typography>
-                        <Typography component="p">
-                        Location: {event.location}
-                        </Typography>
-                    </Paper>
+                    <DragDropContext onDragEnd={this.onDragEnd}>
+                        <Paper className={classes.root} elevation={1}>
+                            <Typography variant="h5" component="h3">
+                            {event.title}
+                            </Typography>
+                            <Typography component="p">
+                            {event.description}
+                            </Typography>
+                            <Typography component="p">
+                            Location: {event.location}
+                            </Typography>
+                        </Paper>
+                    </DragDropContext>
                 </div>
             )
         } else {
@@ -58,6 +71,7 @@ EventDashboard.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
+
     // check if data is available
     const id = ownProps.match.params.id;
     let event = null;
@@ -68,13 +82,33 @@ const mapStateToProps = (state, ownProps) => {
     return {
         event: event,
         eventDetails: eventDetails,
-        auth: state.firebase.auth
+        auth: state.firebase.auth,
     }
 }
 
 export default compose(
     connect(mapStateToProps),
-    // firestoreConnect([
-    //     { collection: 'projects'}
-    // ])
+    firestoreConnect(props => {
+
+        // get subcollections
+        const queryArr = [
+            { 
+                collection: 'eventAuxDetails', 
+                doc: props.location.pathname.split('/')[2], 
+                subcollections: [
+                    { collection: 'notifications' }
+                ]
+            },
+            { 
+                collection: 'eventAuxDetails', 
+                doc: props.location.pathname.split('/')[2], 
+                subcollections: [
+                    { collection: 'items' },
+                ]
+            },
+        ]
+        
+        // return query array
+        return queryArr;
+    })
 )(withStyles(styles)(EventDashboard));
