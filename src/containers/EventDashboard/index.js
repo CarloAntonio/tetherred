@@ -16,6 +16,9 @@ import Typography from '@material-ui/core/Typography';
 import MyItems from './components/myItems';
 import EventItem from './components/eventItem';
 
+// utls
+import onDragEnd from '../../utils/drag';
+
 const styles = theme => ({
     root: {
       ...theme.mixins.gutters(),
@@ -25,18 +28,7 @@ const styles = theme => ({
   });
 
 class EventDashboard extends Component {
-    componentDidMount() {
-        // get the event id
-        console.log(this.props.location.pathname.split('/')[2]);
-    }
-
-    onDragEnd = result => {
-        //TODO
-        console.log(result);
-    }
     render() {
-        console.log(this.props);
-        
         const { event, eventDetails, auth, classes } = this.props;
 
         // Guards
@@ -66,7 +58,7 @@ class EventDashboard extends Component {
                                     </Paper>
                                 </div>
                             </div>
-                            <DragDropContext onDragEnd={this.onDragEnd}>
+                            <DragDropContext onDragEnd={onDragEnd}>
                                 <div className="row">
                                     <div className="col-3">
                                         <MyItems droppableId={this.props.auth.uid}/>
