@@ -61,7 +61,7 @@ class EventDashboard extends Component {
                             <DragDropContext onDragEnd={onDragEnd}>
                                 <div className="row">
                                     <div className="col-3">
-                                        <MyItems droppableId={this.props.auth.uid}/>
+                                        <MyItems droppableId={`myItems/${this.props.auth.uid}`}/>
                                     </div>
                                     <div className="col-9">
                                         <div className="allItemsContainer">
@@ -123,8 +123,11 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 export default compose(
+    withStyles(styles),
     connect(mapStateToProps),
     firestoreConnect(props => {
+
+        console.log(props);
 
         // get subcollections
         const queryArr = [
@@ -139,12 +142,19 @@ export default compose(
                 collection: 'eventAuxDetails', 
                 doc: props.location.pathname.split('/')[2], 
                 subcollections: [
-                    { collection: 'items', where: ['parent', '==', 'root'] },
+                    { collection: 'items', where: ['owner', '==', 'none'] },
                 ]
             },
+            // { 
+            //     collection: 'eventAuxDetails', 
+            //     doc: props.location.pathname.split('/')[2], 
+            //     subcollections: [
+            //         { collection: 'items', where: ['owner', '==', props.auth.uid] },
+            //     ]
+            // },
         ]
         
         // return query array
         return queryArr;
     })
-)(withStyles(styles)(EventDashboard));
+)(EventDashboard);
