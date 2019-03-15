@@ -1,10 +1,14 @@
 import { db } from '../config/fbConfig';
 
-export const setItemOwner = (newOwnerId, result) => {
+export const setItemOwner = result => {
+    const newOwnerId = result.destination.droppableId.split('/')[1];
+    const eventId = result.source.droppableId.split('/')[1];
+    const itemId = result.draggableId;
+
     db.collection(`eventAuxDetails`)
-        .doc(result.source.droppableId)
+        .doc(eventId)
         .collection('items')
-        .doc(result.draggableId)
+        .doc(itemId)
         .update({
             owner: newOwnerId
         })
@@ -16,37 +20,21 @@ export const setItemOwner = (newOwnerId, result) => {
         })
 }
 
-export async function getItemParent(eventId, parentDocId) {
-    return db.collection(`eventAuxDetails`)
-        .doc(eventId)
-        .collection('items')
-        .doc(parentDocId)
-        .get()
-        .then(doc => {
-            if(doc.exists) return { id: doc.id, data: doc.data() };
-        })
-        .catch(err => {
-            console.log(err)
-        });
-}
+export const setItemOwnerToNone = result => {
+    const eventId = result.destination.droppableId.split('/')[1];
+    const itemId = result.draggableId;
 
-export async function getMyItems(eventId, myUserId) {
-    return db.collection('eventAuxDetails')
+    db.collection(`eventAuxDetails`)
         .doc(eventId)
         .collection('items')
-        .where('owner', '==', myUserId)
-        .get()
-        .then(snapshot => {
-            const myItems = []
-            snapshot.forEach(doc => {
-                    myItems.push({
-                    id: doc.id,
-                    data: doc.data()
-                });
-            });
-            return myItems;
+        .doc(itemId)
+        .update({
+            owner: 'none'
+        })
+        .then(() => {
+            console.log('Document Successfully Updated');
         })
         .catch(err => {
-            console.log(err);
+            console.log('Error updating doc: ', err);
         })
 }

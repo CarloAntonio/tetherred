@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { firestoreConnect } from 'react-redux-firebase';
 import PropTypes from 'prop-types';
 import {compose } from 'redux'
 import { connect } from 'react-redux';
@@ -9,8 +10,10 @@ import { Droppable } from 'react-beautiful-dnd'
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
+import EventItem from './eventItem';
+
 // Utils
-import { getMyItems } from '../../../utils/firestoreAPI';
+import { getUserItems } from '../../../utils/filters';
 
 const styles = theme => ({
     myItemsContainer: {
@@ -21,63 +24,51 @@ const styles = theme => ({
     }
 });
 
-class MyItems extends Component {
+const MyItems = props => {
 
-    state = {
-        myItems: null
-    }
+    const { classes } = props;
 
-    componentDidMount(){
-        getMyItems(this.props.match.params.id, this.props.auth.uid)
-            .then(data => {
-                this.setState({
-                    myItems: data
-                })
-            })
-    }
-
-    render() {
-        const { classes } = this.props;
-
-        console.log(this.state);
-
-        const myItemsComponents = [];
-        if(this.state.myItems) this.state.myItems.forEach(item => {
-            myItemsComponents.push(<h3 key={item.id}>{item.data.name}</h3>)
-        })
-
-        return (
-            <div className={classes.myItemsContainer}>
-                <p>Stuff I'm Bringing</p>
-                <Droppable droppableId={this.props.droppableId}>
-                    {(provided) => (
-                        <div 
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
-                            className={classes.itemsHolder}
-                        >
-                            {provided.placeholder}
-                            {myItemsComponents}
-                        </div>
-                    )}
-                </Droppable>
-            </div>
-        )
-    }
+    return (
+        <div className={classes.myItemsContainer}>
+            <p>Stuff I'm Bringing</p>
+            <Droppable droppableId={props.droppableId}>
+                {(provided) => (
+                    <div 
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={classes.itemsHolder}
+                    >
+                        {provided.placeholder}
+                        {props.userItems.map((item, index) => {
+                            return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id}/>
+                        })}
+                        
+                    </div>
+                )}
+            </Droppable>
+        </div>
+    )
 }
 
 MyItems.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    const id = ownProps.match.params.id;
+
+    let userItems = null;
+    if(state.firestore.data.eventAuxDetails && state.firestore.data.eventAuxDetails[id] && state.firestore.data.eventAuxDetails[id].items) 
+        userItems = getUserItems(state.firestore.data.eventAuxDetails[id].items, state.firebase.auth.uid);
+
     return {
         auth: state.firebase.auth,
+        userItems
     }
 }
 
 export default compose(
     withRouter,
     withStyles(styles),
-    connect(mapStateToProps),
+    connect(mapStateToProps)
 )(MyItems);

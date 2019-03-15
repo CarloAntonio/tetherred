@@ -1,15 +1,21 @@
 
-import { setItemOwner } from './firestoreAPI';
+import { setItemOwner, setItemOwnerToNone } from './firestoreAPI';
 
 const onDragEnd = result => {
     // sentinal
     if (!result.destination) return;
 
     const destination = result.destination.droppableId.split('/')[0];
-    const newOwnerId = result.destination.droppableId.split('/')[1];
 
     switch(destination) {
-        case 'myItems': setItemOwner(newOwnerId, result)
+        case 'myItems': {
+            setItemOwner(result) 
+            break;
+        }
+        case 'openItems': {
+            setItemOwnerToNone(result);
+            break;
+        }
     }
 }
 

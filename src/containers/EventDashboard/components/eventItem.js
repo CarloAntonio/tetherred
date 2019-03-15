@@ -31,18 +31,16 @@ class EventItem extends Component {
     state = {
         parentData: null
     }
-    
-    componentDidMount() {
-        if(this.props.itemDetails.parent !== 'none') {
-            getItemParent(this.props.match.params.id, this.props.itemDetails.parent)
-                .then(parentData => {
-                    this.setState({ parentData })
-                });
-        }
-    }
 
     render () {
         const { classes } = this.props;
+
+        let parentheader = null;
+        if(this.props.itemDetails && this.props.itemDetails.rootParentItem){
+            parentheader=(
+                <h3>{this.props.itemDetails.rootParentItem.name}</h3>
+            )
+        }
 
         return (
             <Draggable draggableId={this.props.draggableId} index={this.props.index}>
@@ -64,8 +62,8 @@ class EventItem extends Component {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                     >   
-                        <h3>{this.state.parentData ? this.state.parentData.data.name : null}</h3>
-                        {this.props.itemDetails ? this.props.itemDetails.name : null }
+                        {parentheader}
+                        {this.props.itemDetails ? this.props.itemDetails.data.name : null }
                     </div>
                 )}
             </Draggable>
