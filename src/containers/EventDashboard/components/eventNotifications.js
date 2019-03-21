@@ -10,23 +10,24 @@ import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
     main: {
-        minHeight: 125,
+        minHeight: '40%',
+        maxHeight: '50%',
         marginBottom: 16,
     },
 });
 
-const MyProfile = props => {
+const EventNotifications = props => {
     const { classes } = props;
 
     return (
-        <Paper className={classes.main}>My Profile</Paper>
+        <Paper className={classes.main}>Notifications</Paper>
     )
 }
 
-MyProfile.propTypes = {
+EventNotifications.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
 export default compose(
     withStyles(styles)
-)(MyProfile);
+)(EventNotifications);

@@ -20,7 +20,7 @@ const styles = theme => ({
         backgroundColor: 'white'
     },
     itemsHolder: {
-        minHeight: 100,
+        minHeight: '80vh',
         paddingBottom: 100
     }
 });

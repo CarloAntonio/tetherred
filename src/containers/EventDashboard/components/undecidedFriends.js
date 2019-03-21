@@ -10,23 +10,23 @@ import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
     main: {
-        minHeight: 125,
+        minHeight: '40%',
         marginBottom: 16,
     },
 });
 
-const MyProfile = props => {
+const UndecidedFriends = props => {
     const { classes } = props;
 
     return (
-        <Paper className={classes.main}>My Profile</Paper>
+        <Paper className={classes.main}>Undecided</Paper>
     )
 }
 
-MyProfile.propTypes = {
+UndecidedFriends.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
 export default compose(
     withStyles(styles)
-)(MyProfile);
+)(UndecidedFriends);

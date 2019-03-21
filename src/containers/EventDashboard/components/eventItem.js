@@ -29,14 +29,10 @@ class EventItem extends Component {
     render () {
         const { classes } = this.props;
 
-        console.log(this.props.itemDetails);
-        console.log(this.props.itemDetails.rootParentItem)
-
         let cardContent = null;
         if(this.props.itemDetails) {
             if(!_.isEmpty(this.props.itemDetails.data.children) && this.props.itemDetails.rootParentItem) {
                 if(this.props.itemDetails.rootParentItem.parent === 'root') {
-                    console.log('1')
                     cardContent = (
                         <CardContent onClick={() => this.props.diveIntoItem(this.props.itemDetails.data)}>
                             <Typography component="p">
@@ -50,7 +46,6 @@ class EventItem extends Component {
                         </CardContent>
                     )
                 } else {
-                    console.log('2')
                     cardContent = (
                         <CardContent onClick={() => this.props.diveIntoItem(this.props.itemDetails.data)}>
                             <Typography component="p">
@@ -65,7 +60,6 @@ class EventItem extends Component {
                     )
                 }
             } else if(!_.isEmpty(this.props.itemDetails.data.children) && !this.props.itemDetails.rootParentItem){
-                console.log('3')
                 cardContent = (
                     <Card className={classes.card} >
                         <CardContent onClick={() => this.props.diveIntoItem(this.props.itemDetails.data)}>
@@ -79,7 +73,6 @@ class EventItem extends Component {
                     </Card>
                 )
             } else if(_.isEmpty(this.props.itemDetails.data.children) && this.props.itemDetails.rootParentItem) {
-                console.log('4')
                 cardContent = (
                     <CardContent>
                         <Typography component="p">
@@ -93,7 +86,6 @@ class EventItem extends Component {
                     </CardContent>
                 )
             } else {
-                console.log('5')
                 cardContent = (
                     <Card className={classes.card} >
                         <CardContent>

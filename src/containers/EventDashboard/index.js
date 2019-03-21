@@ -11,6 +11,9 @@ import MyProfile from './components/myProfile';
 import EventSummary from './components/eventSummary';
 import MyItems from './components/myItems';
 import OpenItemsPool from './components/openItemsPool';
+import FriendsList from './components/friendsList';
+import EventNotifications from './components/eventNotifications';
+import UndecidedFriends from './components/undecidedFriends';
 
 // utils
 import onDragEnd from '../../utils/drag';
@@ -27,28 +30,20 @@ class EventDashboard extends Component {
             return (
                 <div className="container mt-3">
                     <div className='row'>
-                        <div className="col-10">
-                            <div className="row">
-                                <div className="col-3">
-                                    <MyProfile/>
-                                </div>
-                                <div className="col-9">
-                                    <EventSummary event={event} />
-                                </div>
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            <div className="col-2 px-0">
+                                <MyProfile/>
+                                <MyItems droppableId={`myItems/${this.props.auth.uid}`}/>
                             </div>
-                            <DragDropContext onDragEnd={onDragEnd}>
-                                <div className="row">
-                                    <div className="col-3">
-                                        <MyItems droppableId={`myItems/${this.props.auth.uid}`}/>
-                                    </div>
-                                    <div className="col-9">
-                                        <OpenItemsPool droppableId={`openItems/${this.props.match.params.id}`}/>
-                                    </div>
-                                </div>
-                            </DragDropContext>
-                        </div>
-                        <div className="col-2">
-                                <p>Notifications</p>
+                            <div className="col-8">
+                                <EventSummary event={event} />
+                                <OpenItemsPool droppableId={`openItems/${this.props.match.params.id}`}/>
+                                <FriendsList />
+                            </div>
+                        </DragDropContext>
+                        <div className="col-2 px-0">
+                            <EventNotifications/>
+                            <UndecidedFriends/>
                         </div>
                     </div>
                     

@@ -37,7 +37,6 @@ const createNewEventError = err => {
 }
 
 export const diveIntoItem = item => {
-    console.log(item)
     return {
         type: actionTypes.DIVE_INTO_ITEM,
         item
