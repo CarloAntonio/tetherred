@@ -15,15 +15,15 @@ export const getRootParentItem = (childItem, allItems) => {
 }
 
 /**
- * Filters for all items that do not have an owner.
+ * Filters for all items that do not have an owner or are shared.
  * @constructor
  * @param {object} allItems - an item object filled with items
- * @returns {Array} array of item objects that are ownerless
+ * @returns {Array} array of item objects that are ownerless or shared
  */
 export const getOwnerlessItems = allItems => {
     const ownerlessItems = []
     Object.keys(allItems).map(itemKey => {
-        if(allItems[itemKey].owner === 'none') {
+        if(allItems[itemKey].owner === 'none' || allItems[itemKey].owner === 'shared') {
             let rootParentItem = 'none';
             if(allItems[itemKey].parent !== 'none') rootParentItem = getRootParentItem(allItems[itemKey], allItems);
             ownerlessItems.push({id: itemKey, data: allItems[itemKey], rootParentItem: rootParentItem});
@@ -48,4 +48,14 @@ export const getUserItems = (allItems, uid) => {
         }
     });
     return userItems;
+}
+
+export const getChildItems = (allItems, parentItem) => {
+    const childItems = [];
+    parentItem.children.forEach(childItemKey => {
+        let rootParentItem = 'none';
+        if(allItems[childItemKey].parent !== 'none') rootParentItem = getRootParentItem(allItems[childItemKey], allItems);
+        childItems.push({id: childItemKey, data: allItems[childItemKey], rootParentItem: rootParentItem });
+    })
+    return childItems;
 }

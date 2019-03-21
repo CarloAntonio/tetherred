@@ -4,11 +4,11 @@ import { firestoreReducer } from 'redux-firestore';
 import { firebaseReducer } from 'react-redux-firebase';
 
 import authReducer from './authReducer';
-import projectReducer from './projectReducer';
+import eventReducer from './eventReducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    project: projectReducer,
+    event: eventReducer,
     firestore: firestoreReducer,
     firebase: firebaseReducer
 });

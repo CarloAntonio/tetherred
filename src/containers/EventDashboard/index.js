@@ -19,8 +19,6 @@ class EventDashboard extends Component {
     render() {
         const { event, eventDetails, auth, } = this.props;
 
-        console.log(this.props);
-
         // Guards
         if (!auth.uid) return <Redirect to='/signin' />
         if (!event) return <Redirect to='/' />
@@ -68,8 +66,6 @@ class EventDashboard extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     const id = ownProps.match.params.id;
-
-    console.log(state);
 
     // check if data is available
     let event = null;

@@ -111,8 +111,6 @@ class PrimaryAppBar extends Component {
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-    console.log(this.props);
-
     const signedOutMenu = (
         <div className={classes.sectionDesktop}>
             <Typography className='d-flex flex-row' variant="h6" color="inherit" noWrap>

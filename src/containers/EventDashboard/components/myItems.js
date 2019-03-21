@@ -10,7 +10,7 @@ import { Droppable } from 'react-beautiful-dnd'
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import EventItem from './eventItem';
+import MyEventItem from './myEventItem';
 
 // Utils
 import { getUserItems } from '../../../utils/filters';
@@ -20,7 +20,8 @@ const styles = theme => ({
         backgroundColor: 'white'
     },
     itemsHolder: {
-        minHeight: 100
+        minHeight: 100,
+        paddingBottom: 100
     }
 });
 
@@ -40,7 +41,7 @@ const MyItems = props => {
                     >
                         {provided.placeholder}
                         {props.userItems.map((item, index) => {
-                            return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id}/>
+                            return <MyEventItem itemDetails={item} key={item.id} index={index} draggableId={item.id}/>
                         })}
                         
                     </div>
