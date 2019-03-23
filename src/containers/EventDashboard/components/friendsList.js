@@ -9,6 +9,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
+// Custom Components
+import FriendCard from './friendCard';
+
 
 const styles = theme => ({
     main: {
@@ -20,11 +23,18 @@ const styles = theme => ({
 class FriendsList extends Component {
     render() {
 
-        const { classes } = this.props;
+        const { classes, members } = this.props;
+
+        // create member components
+        let memberComponents = [];
+        if(members) members.forEach(memberId => memberComponents.push(<FriendCard key={memberId} user={memberId} />));
 
         return ( 
             <Paper className={classes.main}>
-                Going
+                <p>Going</p>
+                <div className="row mx-3">
+                    {memberComponents}
+                </div>
             </Paper>
         )
     }

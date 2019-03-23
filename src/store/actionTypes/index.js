@@ -11,3 +11,6 @@ export const SIGNUP_ERROR = 'SIGNUP_ERROR';
 export const CREATE_EVENT = 'CREATE_EVENT';
 export const CREATE_EVENT_ERROR = 'CREATE_EVENT_ERROR';
 export const DIVE_INTO_ITEM = 'DIVE_INTO_ITEM';
+
+// user actions
+export const GET_USER_MIN_DETAILS = 'GET_USER_MIN_DETAILS';
