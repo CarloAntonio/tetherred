@@ -11,9 +11,9 @@ import MyProfile from './components/myProfile';
 import EventSummary from './components/eventSummary';
 import MyItems from './components/myItems';
 import OpenItemsPool from './components/openItemsPool';
-import FriendsList from './components/friendsList';
+import AttendingList from './components/attendingList';
 import EventNotifications from './components/eventNotifications';
-import UndecidedFriends from './components/undecidedFriends';
+import UndecidedList from './components/undecidedList';
 
 // utils
 import onDragEnd from '../../utils/drag';
@@ -38,12 +38,12 @@ class EventDashboard extends Component {
                             <div className="col-8">
                                 <EventSummary event={event} />
                                 <OpenItemsPool droppableId={`openItems/${this.props.match.params.id}`}/>
-                                <FriendsList />
+                                <AttendingList />
                             </div>
                         </DragDropContext>
                         <div className="col-2 px-0">
                             <EventNotifications/>
-                            <UndecidedFriends/>
+                            <UndecidedList/>
                         </div>
                     </div>
                     

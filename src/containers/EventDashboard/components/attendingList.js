@@ -10,8 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
 // Custom Components
-import FriendCard from './friendCard';
-
+import AttendingFriendCard from './attendingFriendCard';
 
 const styles = theme => ({
     main: {
@@ -20,18 +19,18 @@ const styles = theme => ({
     },
 });
 
-class FriendsList extends Component {
+class AttendingList extends Component {
     render() {
 
-        const { classes, members } = this.props;
+        const { classes, attendingMembers } = this.props;
 
         // create member components
         let memberComponents = [];
-        if(members) members.forEach(memberId => memberComponents.push(<FriendCard key={memberId} user={memberId} />));
+        if(attendingMembers) attendingMembers.forEach(memberId => memberComponents.push(<AttendingFriendCard key={memberId} uid={memberId} />));
 
         return ( 
             <Paper className={classes.main}>
-                <p>Going</p>
+                <p>Attending</p>
                 <div className="row mx-3">
                     {memberComponents}
                 </div>
@@ -40,7 +39,7 @@ class FriendsList extends Component {
     }
 }
 
-FriendsList.propTypes = {
+AttendingList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
@@ -51,8 +50,14 @@ const mapStateToProps = (state, props) => {
     let members = null;
     if(state.firestore.data.eventAuxDetails) members = state.firestore.data.eventAuxDetails[eventId].members;
 
+    // filter for attending meb
+    let attendingMembers = [];
+    members.forEach(memberId => {
+        if(state.firestore.data.eventAuxDetails[eventId].status[memberId] === 'going') attendingMembers.push(memberId)
+    });
+
     return {
-        members: members
+        attendingMembers
     }
 }
 
@@ -60,4 +65,4 @@ export default compose(
     withRouter,
     withStyles(styles),
     connect(mapStateToProps)
-)(FriendsList);
+)(AttendingList);
