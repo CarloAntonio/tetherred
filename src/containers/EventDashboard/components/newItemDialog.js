@@ -1,5 +1,8 @@
 // Libraries
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { cloneDeep, isEmpty } from 'lodash';
@@ -15,6 +18,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+
+// actions
+import { addNewItem } from '../../../store/actions/itemActions';
 
 const styles = theme => ({
     button: {
@@ -45,7 +51,7 @@ class NewItemDialog extends Component {
 
     handleSubmit = () => {
         this.props.handleCloseNewItemDialog();
-        console.log(this.state)
+        this.props.addNewItem(this.state, this.props.match.params.id);
     }
 
     handleClose = () => {
@@ -180,4 +186,14 @@ NewItemDialog.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(NewItemDialog);
+const mapDispatchToProps = dispatch => {
+    return {
+        addNewItem: (formData, eventId) => dispatch(addNewItem(formData, eventId)),
+    }
+}
+
+export default compose(
+    withRouter,
+    withStyles(styles),
+    connect(null, mapDispatchToProps),
+)(NewItemDialog);

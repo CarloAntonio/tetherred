@@ -1,0 +1,67 @@
+
+import { isEmpty } from 'lodash';
+import * as actionTypes from '../actionTypes';
+
+export const addNewItem = (formData, eventId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .add({
+                name: formData.itemName,
+                owner: 'none',
+                parent: 'root',
+                children: []
+            }).then(doc => {
+                if(!isEmpty(formData.parts)) dispatch(addSubItems(doc.id, formData.parts, eventId));
+            }).catch(err => {
+                console.log(err);
+            });
+    }
+}
+
+export const addSubItems = (parentId, partsObject, eventId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        Object.keys(partsObject).map(partKey => {
+            firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .add({
+                name: partsObject[partKey],
+                owner: 'none',
+                parent: parentId,
+                children: []
+            }).then(doc => {
+                dispatch(updateParentItemChildren(eventId, parentId, doc.id))
+            }).catch(err => {
+                console.log(err);
+            });
+        })
+    }
+}
+
+export const updateParentItemChildren = (eventId, parentId, childId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .doc(parentId)
+            .update({
+                children: firestore.FieldValue.arrayUnion(childId)
+            }).catch(err => {
+                console.log(err);
+            });
+    }
+}
