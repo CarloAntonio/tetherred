@@ -9,6 +9,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 
+// Custom Components
+import UserAvatar from '../../../components/UserAvatar';
+
 // Actions
 import { getUserProfileUrl } from '../../../store/actions/userActions';
 
@@ -21,27 +24,14 @@ const styles = theme => ({
         marginBottom: 16,
         padding: '10px 0 0 10px'
     },
-    avatar: {
-        width: 60,
-        height: 60,
-    },
     name: {
         textAlign: 'left'
     }
 });
 
 class MyProfile extends Component {
-    componentWillMount(){
-        // get user profile image
-        this.props.getUserProfileUrl(this.props.auth.uid);
-    }
-
     render() {
         const { classes, user, auth } = this.props;
-
-        // Setup profile avatar
-        let avatar = <Avatar alt="Profile" src={stockPic} className={classes.avatar} />;
-        if(user.userProfileImgUrl) avatar = <Avatar alt="Profile" src={user.userProfileImgUrl} className={classes.avatar} />;
 
         // Setup user Name
         let userName = null;
@@ -51,12 +41,11 @@ class MyProfile extends Component {
 
         return (
             <Paper className={classes.main}>
-                {avatar}
+                <UserAvatar size={50}/>
                 {userName}
             </Paper>
         )
     }
-    
 }
 
 MyProfile.propTypes = {
@@ -70,13 +59,7 @@ const mapStateToProps = state => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        getUserProfileUrl: (uid) => dispatch(getUserProfileUrl(uid))
-    }
-}
-
 export default compose(
     withStyles(styles),
-    connect(mapStateToProps, mapDispatchToProps),
+    connect(mapStateToProps),
 )(MyProfile);
