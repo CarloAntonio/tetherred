@@ -8,18 +8,9 @@ import _ from 'lodash';
 
 // Material UI
 import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
 
 // Custom Components
 import EventCard from './eventCard';
-
-// Utils
-import { diveIntoItem } from '../../../store/actions/eventActions';
 
 const styles = {
     card: {
@@ -75,7 +66,7 @@ class EventItem extends Component {
 
         return (
             <div 
-                className={this.props.parentContainer === 'pool' ? "col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2" : 'col-12'} >
+                className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                 <Draggable draggableId={this.props.draggableId} index={this.props.index}>
                     {provided => (
                         <div
@@ -99,16 +90,9 @@ EventItem.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        diveIntoItem: item => dispatch(diveIntoItem(item)),
-    }
-}
-
 export default compose(
     withRouter,
     withStyles(styles),
-    connect(null, mapDispatchToProps)
 )(EventItem);
 
 // class EventItem extends Component {

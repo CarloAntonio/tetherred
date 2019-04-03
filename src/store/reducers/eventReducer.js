@@ -12,6 +12,13 @@ const diveIntoItem = (state, action) => {
     }
 }
 
+const riseOutOfItem = (state, action) => {
+    return {
+        ...state,
+        diveItem: null
+    }
+}
+
 const createEvent = (state, action) => {
     console.log('created project', action.project);
     return state;
@@ -27,6 +34,7 @@ const eventReducer = (state = initialState, action) => {
         case actionTypes.CREATE_EVENT: return createEvent(state, action);
         case actionTypes.CREATE_EVENT_ERROR: return createEventError(state, action);
         case actionTypes.DIVE_INTO_ITEM: return diveIntoItem(state, action);
+        case actionTypes.RISE_OUT_OF_ITEM: return riseOutOfItem(state, action);
         default: return state;
     }
 }

@@ -1,7 +1,9 @@
 // Libraries
 import React, { Component} from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux'
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
+import _ from 'lodash';
 
 // Material UI
 import { withStyles } from '@material-ui/core/styles';
@@ -13,9 +15,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import red from '@material-ui/core/colors/red';
 import EditIcon from '@material-ui/icons/Edit';
 import InspectIcon from '@material-ui/icons/Search';
+import Button from '@material-ui/core/Button';
 
-// import FavoriteIcon from '@material-ui/icons/Favorite';
-// import ShareIcon from '@material-ui/icons/Share';
+// Actions
+import { diveIntoItem } from '../../../store/actions/eventActions';
+
 
 const styles = theme => ({
     card: {
@@ -30,11 +34,6 @@ const styles = theme => ({
       backgroundColor: red[500],
       margin: 8
     },
-    title: {
-        marginTop: 8,
-        wordBreak: 'break-word',
-        marginBottom: 0
-    },
     actions: {
         display: 'flex',
         padding: 0
@@ -43,21 +42,42 @@ const styles = theme => ({
         padding: '12px 15px',
         margin: 0,
         color: 'tomato'
-    }
+    },
+    button: {
+        margin: 0,
+        height: 60
+    },
 });
 
 class EventCard extends Component{
 
     render() {
         const { classes, itemName, itemDetails } = this.props;
+
+        let nameArea = (
+            <Button className={classes.button} disabled>
+                {itemName}
+            </Button>
+        )
+        if(!_.isEmpty(itemDetails.data.children)) {
+            nameArea = (
+                <Tooltip title='Dive' aria-label='Dive' placement='top'>
+                    <Button color="primary" className={classes.button} onClick={() => this.props.diveIntoItem(this.props.itemDetails.data)}>
+                        {itemName}
+                    </Button>
+                </Tooltip>
+            )
+        }
         
         return (
             <Card className={classes.card}>
                 <div className={classes.header}>
-                    <Avatar aria-label="Recipe" className={classes.avatar}>
-                        {itemName ? itemName.charAt(0) : ':)'}
-                    </Avatar>
-                    <p className={classes.title}>{itemName}</p>
+                    <Tooltip title='Drag Me!' aria-label='Drag Me!' placement='top'>
+                        <Avatar aria-label="Recipe" className={classes.avatar}>
+                            {itemName ? itemName.charAt(0) : ':)'}
+                        </Avatar>
+                    </Tooltip>
+                    {nameArea}
                 </div>
                 <CardActions className={classes.actions} disableActionSpacing>
                     <Tooltip title='Edit' aria-label='Edit'>
@@ -66,7 +86,7 @@ class EventCard extends Component{
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title='Inspect' aria-label='Inspect'>
+                    <Tooltip title='Details' aria-label='Details'>
                         <IconButton aria-label="Inspect Card">
                             <InspectIcon />
                         </IconButton>
@@ -89,4 +109,13 @@ EventCard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(EventCard);
+const mapDispatchToProps = dispatch => {
+    return {
+        diveIntoItem: item => dispatch(diveIntoItem(item)),
+    }
+}
+
+export default compose(
+    withStyles(styles),
+    connect(null, mapDispatchToProps)
+)(EventCard);

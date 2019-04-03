@@ -15,6 +15,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Tooltip from '@material-ui/core/Tooltip';
+import RiseIcon from '@material-ui/icons/KeyboardArrowUp'
 
 // Custom Components
 import EventItem from './eventItem';
@@ -22,6 +24,9 @@ import NewItemDialog from './newItemDialog';
 
 // Utils
 import { getOwnerlessItems, getChildItems } from '../../../utils/filters';
+
+// Actions
+import { riseOutOfItem } from '../../../store/actions/eventActions'
 
 const styles = theme => ({
     main: {
@@ -61,60 +66,108 @@ class OpenItemsPool extends Component {
     render() {
         const { classes, diveItem } = this.props;
 
-        console.log(this.props.openItems);
-
-        // setup title
+        /*****
+        * setup title
+        *****/
         let title = "All Open Card Components";
         if(this.state.filterValue !== '') title = this.state.filterValue;
 
         /*****
         * setup cards to display
         *****/
-
-        // Default: Show All Open Card Components
-        let itemsPool = (
-            this.props.openItems.map((item, index) => {
-                return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id} parentContainer={'pool'}/>
-            })
-        )
-
-        // Open Root Only: Show Open Root Card Components Only
-        if(this.state.filterValue === 'Open Root Card Components Only') {
+        let itemsPool = null;
+        if(!this.props.diveItem) {
+            // Default: Show All Open Card Components
             itemsPool = (
                 this.props.openItems.map((item, index) => {
-                    if(!item.rootParentItem) {
-                        return <EventItem 
-                                    itemDetails={item} 
-                                    key={item.id} 
-                                    index={index} 
-                                    draggableId={item.id} 
-                                    parentContainer={'pool'}/>
-                    }
+                    return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id}/>
                 })
-            ) 
-        }
-        
-        // Open Child Only: Show Open Child Card Components Only
-        if(this.state.filterValue === 'Open Child Card Components Only') {
+            )
+
+            // Open Root Only: Show Open Root Card Components Only
+            if(this.state.filterValue === 'Open Root Card Components Only') {
+                itemsPool = (
+                    this.props.openItems.map((item, index) => {
+                        if(!item.rootParentItem) {
+                            return <EventItem 
+                                        itemDetails={item} 
+                                        key={item.id} 
+                                        index={index} 
+                                        draggableId={item.id} />
+                        }
+                    })
+                ) 
+            }
+            
+            // Open Child Only: Show Open Child Card Components Only
+            if(this.state.filterValue === 'Open Child Card Components Only') {
+                itemsPool = (
+                    this.props.openItems.map((item, index) => {
+                        if(item.rootParentItem) {
+                            return <EventItem 
+                                        itemDetails={item} 
+                                        key={item.id} 
+                                        index={index} 
+                                        draggableId={item.id}/>
+                        }
+                    })
+                ) 
+            }
+        } else {
             itemsPool = (
-                this.props.openItems.map((item, index) => {
-                    if(item.rootParentItem) {
-                        return <EventItem 
-                                    itemDetails={item} 
-                                    key={item.id} 
-                                    index={index} 
-                                    draggableId={item.id} 
-                                    parentContainer={'pool'}/>
-                    }
+                this.props.diveItems.map((item, index) => {
+                    return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id}/>
                 })
-            ) 
+            )
+
+            // Open Root Only: Show Open Root Card Components Only
+            if(this.state.filterValue === 'Open Root Card Components Only') {
+                itemsPool = (
+                    this.props.diveItems.map((item, index) => {
+                        if(!item.rootParentItem) {
+                            return <EventItem 
+                                        itemDetails={item} 
+                                        key={item.id} 
+                                        index={index} 
+                                        draggableId={item.id} />
+                        }
+                    })
+                ) 
+            }
+
+            // Open Child Only: Show Open Child Card Components Only
+            if(this.state.filterValue === 'Open Child Card Components Only') {
+                itemsPool = (
+                    this.props.diveItems.map((item, index) => {
+                        if(item.rootParentItem) {
+                            return <EventItem 
+                                        itemDetails={item} 
+                                        key={item.id} 
+                                        index={index} 
+                                        draggableId={item.id}/>
+                        }
+                    })
+                ) 
+            }
         }
 
-        if(this.props.diveItem) {
-            this.props.openItems.map((item, index) => {
-                return <EventItem itemDetails={item} key={item.id} index={index} draggableId={item.id} parentContainer={'pool'}/>
-            })
-        }
+        /*****
+        * setup button to display
+        *****/
+       let mainButton = (
+            <Fab size="medium" color="secondary" aria-label="Add" className={classes.fab} onClick={this.handleOpenNewItemDialog}>
+                <AddIcon />
+            </Fab>
+       )
+       if(this.props.diveItem) {
+           mainButton = (
+            <Tooltip title='Rise' aria-label='Rise'>
+                <Fab size="medium" color="secondary" aria-label="Add" className={classes.fab} onClick={this.props.riseOutOfItem}>
+                    <RiseIcon />
+                </Fab>
+            </Tooltip>
+           )
+       }
 
         return (
             <Paper className={classes.main}>
@@ -148,9 +201,7 @@ class OpenItemsPool extends Component {
                         {title}
                     </p>
                     
-                    <Fab size="medium" color="secondary" aria-label="Add" className={classes.fab} onClick={this.handleOpenNewItemDialog}>
-                        <AddIcon />
-                    </Fab>
+                    {mainButton}
                 </div>
                 
                 <Droppable droppableId={this.props.droppableId}>
@@ -183,19 +234,29 @@ const mapStateToProps = (state, ownProps) => {
     const id = ownProps.match.params.id;
 
     let openItems = null;
+    let diveItems = null;
     if(state.firestore.data.eventAuxDetails && state.firestore.data.eventAuxDetails[id] && state.firestore.data.eventAuxDetails[id].items) {
         if(_.isEmpty(state.event.diveItem)) openItems = getOwnerlessItems(state.firestore.data.eventAuxDetails[id].items);
-        else openItems = getChildItems(state.firestore.data.eventAuxDetails[id].items, state.event.diveItem);
+        else diveItems = getChildItems(state.firestore.data.eventAuxDetails[id].items, state.event.diveItem);
     }
+
+    // TODO: Taken Items
 
     return {
         openItems,
+        diveItems,
         diveItem: state.event.diveItem
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        riseOutOfItem: () => dispatch(riseOutOfItem())
     }
 }
 
 export default compose(
     withRouter,
     withStyles(styles),
-    connect(mapStateToProps)
+    connect(mapStateToProps, mapDispatchToProps)
 )(OpenItemsPool);

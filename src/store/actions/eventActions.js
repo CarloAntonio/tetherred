@@ -42,3 +42,9 @@ export const diveIntoItem = item => {
         item
     }
 }
+
+export const riseOutOfItem = () => {
+    return {
+        type: actionTypes.RISE_OUT_OF_ITEM
+    }
+}
