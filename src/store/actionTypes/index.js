@@ -14,3 +14,4 @@ export const DIVE_INTO_ITEM = 'DIVE_INTO_ITEM';
 
 // user actions
 export const GET_USER_MIN_DETAILS = 'GET_USER_MIN_DETAILS';
+export const GET_USER_PROFILE_URL = 'GET_USER_PROFILE_URL';

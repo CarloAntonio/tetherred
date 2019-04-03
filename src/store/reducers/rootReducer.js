@@ -10,7 +10,7 @@ import userReducer from './userReducer';
 const rootReducer = combineReducers({
     auth: authReducer,
     event: eventReducer,
-    usersData: userReducer,
+    user: userReducer,
     firestore: firestoreReducer,
     firebase: firebaseReducer
 });
