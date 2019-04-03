@@ -28,23 +28,23 @@ class EventDashboard extends Component {
     
         if (eventDetails && eventDetails.items) {
             return (
-                <div className="container mt-3">
+                <div className="fluid-container mt-3 mx-5">
                     <div className='row'>
                         <DragDropContext onDragEnd={onDragEnd}>
                             <div className="col-2 px-0">
                                 <MyProfile/>
                                 <MyItems droppableId={`myItems/${this.props.auth.uid}`}/>
                             </div>
-                            <div className="col-8">
+                            <div className="col-10">
                                 <EventSummary event={event} />
                                 <OpenItemsPool droppableId={`openItems/${this.props.match.params.id}`}/>
                                 <AttendingList />
                             </div>
                         </DragDropContext>
-                        <div className="col-2 px-0">
+                        {/* <div className="col-1 px-0">
                             <EventNotifications/>
                             <UndecidedList/>
-                        </div>
+                        </div> */}
                     </div>
                     
                 </div>
