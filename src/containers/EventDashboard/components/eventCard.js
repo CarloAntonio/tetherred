@@ -9,9 +9,13 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import red from '@material-ui/core/colors/red';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
+import EditIcon from '@material-ui/icons/Edit';
+import InspectIcon from '@material-ui/icons/Search';
+
+// import FavoriteIcon from '@material-ui/icons/Favorite';
+// import ShareIcon from '@material-ui/icons/Share';
 
 const styles = theme => ({
     card: {
@@ -32,22 +36,21 @@ const styles = theme => ({
         marginBottom: 0
     },
     actions: {
-      display: 'flex',
+        display: 'flex',
         padding: 0
     },
+    cardType: {
+        padding: '12px 15px',
+        margin: 0,
+        color: 'tomato'
+    }
 });
 
 class EventCard extends Component{
 
-    state = { expanded: false };
-
-    handleExpandClick = () => {
-      this.setState(state => ({ expanded: !state.expanded }));
-    };
-
     render() {
-        const { classes, itemName } = this.props;
-
+        const { classes, itemName, itemDetails } = this.props;
+        
         return (
             <Card className={classes.card}>
                 <div className={classes.header}>
@@ -57,12 +60,25 @@ class EventCard extends Component{
                     <p className={classes.title}>{itemName}</p>
                 </div>
                 <CardActions className={classes.actions} disableActionSpacing>
-                    <IconButton aria-label="Add to favorites">
-                        <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="Share">
-                        <ShareIcon />
-                    </IconButton>
+                    <Tooltip title='Edit' aria-label='Edit'>
+                        <IconButton aria-label="Edit Card">
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title='Inspect' aria-label='Inspect'>
+                        <IconButton aria-label="Inspect Card">
+                            <InspectIcon />
+                        </IconButton>
+                    </Tooltip>
+                    
+                    <Tooltip 
+                        title={itemDetails.data.parent === 'root' ? 'Root Component' : 'Child Component' } 
+                        aria-label={itemDetails.data.parent === 'root' ? 'Root' : 'Child' }>
+                        <h5 className={classes.cardType}>
+                            {itemDetails.data.parent === 'root' ? 'R' : 'C' }
+                        </h5>
+                    </Tooltip>
                 </CardActions>
             </Card>
         )
