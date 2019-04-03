@@ -21,6 +21,8 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 
 // Custom Components
 import CreateEventDialog from './components/createEventDialog';
+import UserAvatar from '../../components/UserAvatar';
+import EditProfileModal from '../../modals/editProfileModal';
 
 // Actions
 import { signOut } from '../../store/actions/authActions';
@@ -68,18 +70,26 @@ class PrimaryAppBar extends Component {
   state = {
     anchorEl: null,
     mobileMoreAnchorEl: null,
-    showCreateEventModal: false
+    showCreateEventModal: false,
+    showEditProfile: false
   };
 
+  handleSignout = () => {
+    this.handleProfileMenuClose();
+    this.props.signOut();
+  }
+
+  // Profile Menu Controls
   handleProfileMenuOpen = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleMenuClose = () => {
+  handleProfileMenuClose = () => {
     this.setState({ anchorEl: null });
     this.handleMobileMenuClose();
   };
 
+  // Mobile Menu Dialog Controls
   handleMobileMenuOpen = event => {
     this.setState({ mobileMoreAnchorEl: event.currentTarget });
   };
@@ -88,11 +98,7 @@ class PrimaryAppBar extends Component {
     this.setState({ mobileMoreAnchorEl: null });
   };
 
-  handleSignout = () => {
-    this.handleMenuClose();
-    this.props.signOut();
-  }
-
+  // Create Event Dialog Controls
   handleShowCreateEventModal = () => {
     this.setState({
       showCreateEventModal: true
@@ -102,6 +108,20 @@ class PrimaryAppBar extends Component {
   handleHideCreateEventModal = () => {
     this.setState({
       showCreateEventModal: false
+    })
+  }
+
+  // Edit Profile Dialog Controls
+  handleOpenEditProfile = () => {
+    this.handleProfileMenuClose();
+    this.setState({
+      showEditProfile: true
+    })
+  }
+
+  handleCloseEditProfile = () => {
+    this.setState({
+      showEditProfile: false
     })
   }
 
@@ -135,7 +155,7 @@ class PrimaryAppBar extends Component {
                 aria-haspopup="true"
                 onClick={this.handleProfileMenuOpen}
                 color="inherit">
-                <AccountCircle />
+                <UserAvatar size={40}/>
             </IconButton>
         </div>
     )
@@ -146,8 +166,8 @@ class PrimaryAppBar extends Component {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={isMenuOpen}
-        onClose={this.handleMenuClose}>
-        <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
+        onClose={this.handleProfileMenuClose}>
+        <MenuItem onClick={this.handleOpenEditProfile}>Edit Profile</MenuItem>
         <MenuItem onClick={this.handleSignout}>Sign Out</MenuItem>
       </Menu>
     );
@@ -158,7 +178,7 @@ class PrimaryAppBar extends Component {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={isMobileMenuOpen}
-        onClose={this.handleMenuClose}>
+        onClose={this.handleProfileMenuClose}>
         <MenuItem onClick={this.handleMobileMenuClose}>
           <IconButton color="inherit" onClick={this.handleShowCreateEventModal}>
             <AddIcon />
@@ -203,9 +223,14 @@ class PrimaryAppBar extends Component {
         </AppBar>
         {signedInMenuPopUp}
         {renderMobileMenu}
+
         <CreateEventDialog 
           showCreateEventModal={this.state.showCreateEventModal}
           handleHideCreateEventModal={this.handleHideCreateEventModal}/>
+
+        <EditProfileModal
+          showModal={this.state.showEditProfile}
+          handleClose={this.handleCloseEditProfile}/>
       </div>
     );
   }

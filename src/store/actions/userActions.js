@@ -1,4 +1,5 @@
 import * as actionTypes from '../actionTypes';
+import { storageRef } from '../../config/fbConfig';
 
 export const getUserMinDetails = uid => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
@@ -23,5 +24,26 @@ const addMinUserDetails = (uid, data) => {
             uid, 
             data
         }
+    }
+}
+
+export const getUserProfileUrl = uid => {
+    return dispatch => {
+        storageRef
+            .child(`${uid}/profilePic.jpg`)
+            .getDownloadURL()
+            .then(url => {
+                dispatch(addUserProfileUrl(url))
+          }).catch(function(error) {
+                // Handle any errors
+                console.log('Unable to fetch profile pic')
+          });
+    }
+}
+
+const addUserProfileUrl = url => {
+    return {
+        type: actionTypes.GET_USER_PROFILE_URL,
+        url: url
     }
 }

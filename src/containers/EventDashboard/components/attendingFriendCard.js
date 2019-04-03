@@ -51,7 +51,7 @@ FriendCard.propTypes = {
 
 const mapStateToProps = (state, props) => {
     return {
-        minUserData: state.usersData.userMinDetails
+        minUserData: state.user.userMinDetails
     }
 }
 
