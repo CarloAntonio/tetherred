@@ -44,7 +44,6 @@ export const diveIntoItem = (item, itemId) => {
 }
 
 export const riseOutOfItem = (riseDetails) => {
-    console.log(riseDetails);
     if(riseDetails === 'root') {
         return {
             type: actionTypes.RISE_TO_ROOT

@@ -67,10 +67,6 @@ class OpenItemsPool extends Component {
         const { classes, diveDetails, riseDetails } = this.props;
 
 
-        console.log(diveDetails);
-        console.log(riseDetails);
-        console.log(this.props.diveItems)
-
         /*****
         * setup title
         *****/
@@ -255,8 +251,8 @@ const mapStateToProps = (state, ownProps) => {
         && state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId]
         && state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId].parent !== 'root') {
         riseDetails = {
-            diveItem: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId],
-            diveItemId: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId].parent
+            diveItem: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItem.parent],
+            diveItemId: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItem.parent].parent
         }
     }
 
