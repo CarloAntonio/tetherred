@@ -64,7 +64,12 @@ class OpenItemsPool extends Component {
     }
 
     render() {
-        const { classes, diveItem } = this.props;
+        const { classes, diveDetails, riseDetails } = this.props;
+
+
+        console.log(diveDetails);
+        console.log(riseDetails);
+        console.log(this.props.diveItems)
 
         /*****
         * setup title
@@ -76,7 +81,7 @@ class OpenItemsPool extends Component {
         * setup cards to display
         *****/
         let itemsPool = null;
-        if(!this.props.diveItem) {
+        if(!this.props.diveDetails.diveItem) {
             // Default: Show All Open Card Components
             itemsPool = (
                 this.props.openItems.map((item, index) => {
@@ -159,10 +164,14 @@ class OpenItemsPool extends Component {
                 <AddIcon />
             </Fab>
        )
-       if(this.props.diveItem) {
+       if(this.props.diveDetails.diveItem) {
            mainButton = (
             <Tooltip title='Rise' aria-label='Rise'>
-                <Fab size="medium" color="secondary" aria-label="Add" className={classes.fab} onClick={this.props.riseOutOfItem}>
+                <Fab 
+                    size="medium" 
+                    color="secondary" 
+                    aria-label="Add" 
+                    className={classes.fab} onClick={() => this.props.riseOutOfItem(this.props.riseDetails)}>
                     <RiseIcon />
                 </Fab>
             </Tooltip>
@@ -236,8 +245,19 @@ const mapStateToProps = (state, ownProps) => {
     let openItems = null;
     let diveItems = null;
     if(state.firestore.data.eventAuxDetails && state.firestore.data.eventAuxDetails[id] && state.firestore.data.eventAuxDetails[id].items) {
-        if(_.isEmpty(state.event.diveItem)) openItems = getOwnerlessItems(state.firestore.data.eventAuxDetails[id].items);
-        else diveItems = getChildItems(state.firestore.data.eventAuxDetails[id].items, state.event.diveItem);
+        if(_.isEmpty(state.event.diveDetails.diveItem)) openItems = getOwnerlessItems(state.firestore.data.eventAuxDetails[id].items);
+        else diveItems = getChildItems(state.firestore.data.eventAuxDetails[id].items, state.event.diveDetails.diveItem);
+    }
+
+    // setup parent rise data is rise is possible
+    let riseDetails = 'root';
+    if(state.event.diveDetails 
+        && state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId]
+        && state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId].parent !== 'root') {
+        riseDetails = {
+            diveItem: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId],
+            diveItemId: state.firestore.data.eventAuxDetails[id].items[state.event.diveDetails.diveItemId].parent
+        }
     }
 
     // TODO: Taken Items
@@ -245,13 +265,14 @@ const mapStateToProps = (state, ownProps) => {
     return {
         openItems,
         diveItems,
-        diveItem: state.event.diveItem
+        riseDetails,
+        diveDetails: state.event.diveDetails
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        riseOutOfItem: () => dispatch(riseOutOfItem())
+        riseOutOfItem: (riseDetails) => dispatch(riseOutOfItem(riseDetails))
     }
 }
 

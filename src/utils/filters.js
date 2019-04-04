@@ -5,11 +5,10 @@
  * @param {object} allItems - an item object filled with items
  * @returns {object} - the root parent item
  */
-export const getRootParentItem = (childItem, allItems) => {
+export const getParentItem = (childItem, allItems) => {
     for(let itemKey in allItems) {
         if(itemKey === childItem.parent) {
-            if(allItems[itemKey].parent === 'root') return allItems[itemKey];
-            else getRootParentItem(allItems, allItems[itemKey]);
+            return allItems[itemKey];
         }
     }
 }
@@ -24,9 +23,13 @@ export const getOwnerlessItems = allItems => {
     const ownerlessItems = []
     Object.keys(allItems).map(itemKey => {
         if(allItems[itemKey].owner === 'none' || allItems[itemKey].owner === 'shared') {
-            let rootParentItem = 'none';
-            if(allItems[itemKey].parent !== 'none') rootParentItem = getRootParentItem(allItems[itemKey], allItems);
-            ownerlessItems.push({id: itemKey, data: allItems[itemKey], rootParentItem: rootParentItem});
+            let parentItem = 'none';
+            if(allItems[itemKey].parent !== 'root') parentItem = getParentItem(allItems[itemKey], allItems);
+            ownerlessItems.push({
+                id: itemKey, 
+                data: allItems[itemKey], 
+                parentItem: parentItem, 
+                parentItemId: allItems[itemKey].parent});
         }
     });
     return ownerlessItems;
@@ -42,9 +45,13 @@ export const getUserItems = (allItems, uid) => {
     const userItems = [];
     Object.keys(allItems).map(itemKey => {
         if(allItems[itemKey].owner === uid) {
-            let rootParentItem = 'none';
-            if(allItems[itemKey].parent !== 'none') rootParentItem = getRootParentItem(allItems[itemKey], allItems);
-            userItems.push({id: itemKey, data: allItems[itemKey], rootParentItem: rootParentItem});
+            let parentItem = 'none';
+            if(allItems[itemKey].parent !== 'none') parentItem = getParentItem(allItems[itemKey], allItems);
+            userItems.push({
+                id: itemKey, 
+                data: allItems[itemKey], 
+                parentItem: parentItem, 
+                parentItemId: allItems[itemKey].parent});
         }
     });
     return userItems;
@@ -53,9 +60,13 @@ export const getUserItems = (allItems, uid) => {
 export const getChildItems = (allItems, parentItem) => {
     const childItems = [];
     parentItem.children.forEach(childItemKey => {
-        let rootParentItem = 'none';
-        if(allItems[childItemKey].parent !== 'none') rootParentItem = getRootParentItem(allItems[childItemKey], allItems);
-        childItems.push({id: childItemKey, data: allItems[childItemKey], rootParentItem: rootParentItem });
+        let parentItem = 'none';
+        if(allItems[childItemKey].parent !== 'none') parentItem = getParentItem(allItems[childItemKey], allItems);
+        childItems.push({
+            id: childItemKey, 
+            data: allItems[childItemKey], 
+            parentItem: parentItem, 
+            parentItemId: allItems[childItemKey].parent});
     })
     return childItems;
 }

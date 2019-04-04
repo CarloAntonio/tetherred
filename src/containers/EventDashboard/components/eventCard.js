@@ -62,7 +62,7 @@ class EventCard extends Component{
         if(!_.isEmpty(itemDetails.data.children)) {
             nameArea = (
                 <Tooltip title='Dive' aria-label='Dive' placement='top'>
-                    <Button color="primary" className={classes.button} onClick={() => this.props.diveIntoItem(this.props.itemDetails.data)}>
+                    <Button color="primary" className={classes.button} onClick={() => this.props.diveIntoItem(this.props.itemDetails.data, this.props.itemDetails.id)}>
                         {itemName}
                     </Button>
                 </Tooltip>
@@ -111,7 +111,7 @@ EventCard.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        diveIntoItem: item => dispatch(diveIntoItem(item)),
+        diveIntoItem: (item, itemId) => dispatch(diveIntoItem(item, itemId)),
     }
 }
 

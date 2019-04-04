@@ -1,21 +1,39 @@
 import * as actionTypes from '../actionTypes';
 
 const initialState = {
-    diveItem: null
+    diveDetails: {
+        diveItem: null,
+        diveItemId: null
+    }
 };
 
 const diveIntoItem = (state, action) => {
-    console.log(action.item);
     return {
         ...state,
-        diveItem: action.item
+        diveDetails: {
+            diveItem: action.payload.item,
+            diveItemId: action.payload.itemId
+        }
     }
 }
 
 const riseOutOfItem = (state, action) => {
     return {
         ...state,
-        diveItem: null
+        diveDetails: {
+            diveItem: action.payload.item,
+            diveItemId: action.payload.itemId
+        }
+    }
+}
+
+const riseToRoot = (state, action) => {
+    return {
+        ...state,
+        diveDetails: {
+            diveItem: null,
+            diveItemId: null
+        }
     }
 }
 
@@ -35,6 +53,7 @@ const eventReducer = (state = initialState, action) => {
         case actionTypes.CREATE_EVENT_ERROR: return createEventError(state, action);
         case actionTypes.DIVE_INTO_ITEM: return diveIntoItem(state, action);
         case actionTypes.RISE_OUT_OF_ITEM: return riseOutOfItem(state, action);
+        case actionTypes.RISE_TO_ROOT: return riseToRoot(state, action);
         default: return state;
     }
 }

@@ -36,15 +36,27 @@ const createNewEventError = err => {
     }
 }
 
-export const diveIntoItem = item => {
+export const diveIntoItem = (item, itemId) => {
     return {
         type: actionTypes.DIVE_INTO_ITEM,
-        item
+        payload: { item, itemId }
     }
 }
 
-export const riseOutOfItem = () => {
-    return {
-        type: actionTypes.RISE_OUT_OF_ITEM
+export const riseOutOfItem = (riseDetails) => {
+    console.log(riseDetails);
+    if(riseDetails === 'root') {
+        return {
+            type: actionTypes.RISE_TO_ROOT
+        }
+    } else {
+        return {
+            type: actionTypes.RISE_OUT_OF_ITEM,
+            payload: { 
+                item: riseDetails.diveItem,
+                itemId: riseDetails.diveItemId
+            }
+        }
     }
+
 }
