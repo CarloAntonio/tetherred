@@ -57,5 +57,11 @@ export const riseOutOfItem = (riseDetails) => {
             }
         }
     }
+}
 
+export const changeFilterValue = (filterValue) => {
+    return {
+        type: actionTypes.CHANGE_FILTER_VALUE,
+        filterValue
+    }
 }

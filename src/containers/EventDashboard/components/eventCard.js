@@ -18,7 +18,7 @@ import InspectIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
 
 // Actions
-import { diveIntoItem } from '../../../store/actions/eventActions';
+import { diveIntoItem, changeFilterValue } from '../../../store/actions/eventActions';
 
 
 const styles = theme => ({
@@ -51,6 +51,11 @@ const styles = theme => ({
 
 class EventCard extends Component{
 
+    handleDive = (data, id) => {
+        this.props.diveIntoItem(data, id);
+        this.props.changeFilterValue('');
+    }
+
     render() {
         const { classes, itemName, itemDetails } = this.props;
 
@@ -62,7 +67,7 @@ class EventCard extends Component{
         if(!_.isEmpty(itemDetails.data.children)) {
             nameArea = (
                 <Tooltip title='Dive' aria-label='Dive' placement='top'>
-                    <Button color="primary" className={classes.button} onClick={() => this.props.diveIntoItem(this.props.itemDetails.data, this.props.itemDetails.id)}>
+                    <Button color="primary" className={classes.button} onClick={() => this.handleDive(this.props.itemDetails.data, this.props.itemDetails.id)}>
                         {itemName}
                     </Button>
                 </Tooltip>
@@ -112,6 +117,7 @@ EventCard.propTypes = {
 const mapDispatchToProps = dispatch => {
     return {
         diveIntoItem: (item, itemId) => dispatch(diveIntoItem(item, itemId)),
+        changeFilterValue: (filterValue) => dispatch(changeFilterValue(filterValue)),
     }
 }
 

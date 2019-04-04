@@ -1,11 +1,22 @@
 import * as actionTypes from '../actionTypes';
 
 const initialState = {
+    filterValue: '',
     diveDetails: {
         diveItem: null,
         diveItemId: null
     }
 };
+
+const createEvent = (state, action) => {
+    console.log('created project', action.project);
+    return state;
+}
+
+const createEventError = (state, action) => {
+    console.log('create project error', action.err);
+    return state;
+}
 
 const diveIntoItem = (state, action) => {
     return {
@@ -37,14 +48,11 @@ const riseToRoot = (state, action) => {
     }
 }
 
-const createEvent = (state, action) => {
-    console.log('created project', action.project);
-    return state;
-}
-
-const createEventError = (state, action) => {
-    console.log('create project error', action.err);
-    return state;
+const changeFilterValue = (state, action) => {
+    return {
+        ...state, 
+        filterValue: action.filterValue
+    }
 }
 
 const eventReducer = (state = initialState, action) => {
@@ -54,6 +62,7 @@ const eventReducer = (state = initialState, action) => {
         case actionTypes.DIVE_INTO_ITEM: return diveIntoItem(state, action);
         case actionTypes.RISE_OUT_OF_ITEM: return riseOutOfItem(state, action);
         case actionTypes.RISE_TO_ROOT: return riseToRoot(state, action);
+        case actionTypes.CHANGE_FILTER_VALUE: return changeFilterValue(state, action);
         default: return state;
     }
 }

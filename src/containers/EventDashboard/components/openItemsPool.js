@@ -26,7 +26,7 @@ import NewItemDialog from './newItemDialog';
 import { getOwnerlessItems, getChildItems } from '../../../utils/filters';
 
 // Actions
-import { riseOutOfItem } from '../../../store/actions/eventActions'
+import { riseOutOfItem, changeFilterValue } from '../../../store/actions/eventActions'
 
 const styles = theme => ({
     main: {
@@ -48,7 +48,6 @@ class OpenItemsPool extends Component {
 
     state = {
         showNewItemDialog: false,
-        filterValue: ''
     }
 
     handleCloseNewItemDialog = () => {
@@ -59,19 +58,15 @@ class OpenItemsPool extends Component {
         this.setState({ showNewItemDialog: true });
     }
 
-    handleFilterChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-
     render() {
         const { classes, diveDetails, riseDetails } = this.props;
-
 
         /*****
         * setup title
         *****/
         let title = "All Open Card Components";
-        if(this.state.filterValue !== '') title = this.state.filterValue;
+        if(this.props.filterValue !== '') title = this.props.filterValue;
+        if(this.props.diveDetails.diveItem) title = this.props.diveDetails.diveItem.name + ' Components';
 
         /*****
         * setup cards to display
@@ -86,7 +81,7 @@ class OpenItemsPool extends Component {
             )
 
             // Open Root Only: Show Open Root Card Components Only
-            if(this.state.filterValue === 'Open Root Card Components Only') {
+            if(this.props.filterValue === 'Open Root Card Components Only') {
                 itemsPool = (
                     this.props.openItems.map((item, index) => {
                         if(!item.rootParentItem) {
@@ -101,7 +96,7 @@ class OpenItemsPool extends Component {
             }
             
             // Open Child Only: Show Open Child Card Components Only
-            if(this.state.filterValue === 'Open Child Card Components Only') {
+            if(this.props.filterValue === 'Open Child Card Components Only') {
                 itemsPool = (
                     this.props.openItems.map((item, index) => {
                         if(item.rootParentItem) {
@@ -122,7 +117,7 @@ class OpenItemsPool extends Component {
             )
 
             // Open Root Only: Show Open Root Card Components Only
-            if(this.state.filterValue === 'Open Root Card Components Only') {
+            if(this.props.filterValue === 'Open Root Card Components Only') {
                 itemsPool = (
                     this.props.diveItems.map((item, index) => {
                         if(!item.rootParentItem) {
@@ -137,7 +132,7 @@ class OpenItemsPool extends Component {
             }
 
             // Open Child Only: Show Open Child Card Components Only
-            if(this.state.filterValue === 'Open Child Card Components Only') {
+            if(this.props.filterValue === 'Open Child Card Components Only') {
                 itemsPool = (
                     this.props.diveItems.map((item, index) => {
                         if(item.rootParentItem) {
@@ -176,12 +171,18 @@ class OpenItemsPool extends Component {
 
         return (
             <Paper className={classes.main}>
+                <div className='d-flex justify-content-center'>
+                    <p className='mb-0 py-4'>
+                        {title}
+                    </p>
+                </div>
+                               
                 <div className='d-flex justify-content-between'>
                     <FormControl className={classes.formControl}>
                         <InputLabel htmlFor="age-simple">Filter Cards</InputLabel>
                         <Select
-                            value={this.state.filterValue}
-                            onChange={this.handleFilterChange}
+                            value={this.props.filterValue}
+                            onChange={(event) => this.props.changeFilterValue(event.target.value)}
                             inputProps={{
                             name: 'filterValue',
                             id: 'filterValue',
@@ -201,10 +202,6 @@ class OpenItemsPool extends Component {
                             <MenuItem value='All Card Components'>All Cards</MenuItem> */}
                         </Select>
                     </FormControl>
-
-                    <p className='mb-0 py-4'>
-                        {title}
-                    </p>
                     
                     {mainButton}
                 </div>
@@ -262,13 +259,15 @@ const mapStateToProps = (state, ownProps) => {
         openItems,
         diveItems,
         riseDetails,
-        diveDetails: state.event.diveDetails
+        diveDetails: state.event.diveDetails,
+        filterValue: state.event.filterValue
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        riseOutOfItem: (riseDetails) => dispatch(riseOutOfItem(riseDetails))
+        riseOutOfItem: (riseDetails) => dispatch(riseOutOfItem(riseDetails)),
+        changeFilterValue: (filterValue) => dispatch(changeFilterValue(filterValue)),
     }
 }
 
