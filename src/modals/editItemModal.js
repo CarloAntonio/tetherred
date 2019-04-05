@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import dateFormat from 'dateformat';
+import PropTypes from 'prop-types';
 
 // Material UI
 import { withStyles } from '@material-ui/core/styles';
@@ -15,23 +16,35 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DiveIcon from '@material-ui/icons/KeyboardArrowDown'
 
 // Actions
 import { hideEditItemModal } from '../store/actions/itemActions';
 
+const styles = theme => ({
+    button: {
+      margin: 0,
+    },
+});
+
 class EditItemModal extends Component {
     state = {
         name: '',
-        details: ''
+        details: '',
+        owner: '',
+        children: []
     }
 
     componentWillReceiveProps = nextProps => {
-        console.log(nextProps.targetItemDetails);
-
         if(nextProps.targetItemDetails) {
             this.setState({
                 name: nextProps.targetItemDetails.name,
-                details: nextProps.targetItemDetails.details
+                details: nextProps.targetItemDetails.details,
+                owner: nextProps.targetItemDetails.owner,
+                children: nextProps.targetItemChildren
             })
         }
     }
@@ -46,7 +59,51 @@ class EditItemModal extends Component {
         console.log("Submitting.... lol jk");
     }
 
+    handleDeleteItem = () => {
+        console.log("Deleting Item.... lol jk")
+    }
+
+    handleSubItemDelete = () => {
+        console.log("Deleting.... lol jk again")
+    }
+
     render() {
+        const { classes } = this.props;
+
+        console.log(this.state);
+        let subItems = [];
+        this.state.children.forEach(item => {
+            subItems.push(
+                <div className='d-flex' key={item.id}>
+                    <TextField
+                        disabled
+                        value={item.data.name}
+                        margin="dense"
+                        id={item.id}
+                        label="Sub Item Name"
+                        variant="outlined"
+                        fullWidth/>
+                    <Tooltip title='Dive' aria-label='Dive' placement='top'>
+                        <IconButton 
+                            className={classes.button} 
+                            onClick={null}
+                            aria-label="Dive">
+                            <DiveIcon />
+                        </IconButton>
+                    </Tooltip>
+                    
+                    <Tooltip title='Delete' aria-label='Delete' placement='top'>
+                        <IconButton 
+                            className={classes.button} 
+                            onClick={this.handleSubItemDelete}
+                            aria-label="Delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+            </div>
+            )
+        })
+        
 
         let updatedAt = null;
         if(this.props.targetItemDetails) {
@@ -62,7 +119,6 @@ class EditItemModal extends Component {
     
                 <DialogContent>
                     
-                
                     <TextField
                         onChange={this.handleChange}
                         value={this.state.name}
@@ -85,6 +141,8 @@ class EditItemModal extends Component {
                         variant="outlined"
                         fullWidth/>
 
+                    {subItems}
+
                     <Typography>
                         Last Update By: {this.props.lastUpdatedBy ? <b>{this.props.lastUpdatedBy.displayName}</b> : <b>Unknown</b>}
                     </Typography>
@@ -102,11 +160,18 @@ class EditItemModal extends Component {
                     <Button onClick={this.handleSubmit} color="primary">
                         Update
                     </Button>
+                    <Button onClick={this.handleDeleteItem} color="primary">
+                        Delete
+                    </Button>
                 </DialogActions>
             </Dialog>
         )
     }
 }
+
+EditItemModal.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = (state, ownProps) => {
     const id = ownProps.match.params.id;
@@ -116,7 +181,8 @@ const mapStateToProps = (state, ownProps) => {
         && state.firestore.data.eventAuxDetails[id] 
         && state.firestore.data.eventAuxDetails[id].items
         && state.item.editItemModalTargetId !== '') {
-        targetItemDetails = state.firestore.data.eventAuxDetails[id].items[state.item.editItemModalTargetId]
+        targetItemDetails = state.firestore.data.eventAuxDetails[id].items[state.item.editItemModalTargetId];
+
     }
 
     let targetItemDetailsLastUpdatedBy = null;
@@ -127,10 +193,20 @@ const mapStateToProps = (state, ownProps) => {
         targetItemDetailsLastUpdatedBy = state.user.userMinDetails[targetItemDetails.updatedBy]
     }
 
+    let targetItemChildren = [];
+    if(targetItemDetails
+        && state.firestore.data.eventAuxDetails[id] 
+        && state.firestore.data.eventAuxDetails[id].items) {
+            targetItemDetails.children.forEach(childItemId => targetItemChildren.push({
+                data: state.firestore.data.eventAuxDetails[id].items[childItemId],
+                id: childItemId
+            }));
+        }
 
     return {
         showModal: state.item.showEditItemModal,
         targetItemDetails,
+        targetItemChildren,
         lastUpdatedBy: targetItemDetailsLastUpdatedBy,
     }
 }
@@ -143,5 +219,6 @@ const mapDispatchToProps = dispatch => {
 
 export default compose(
     withRouter,
+    withStyles(styles),
     connect(mapStateToProps, mapDispatchToProps)
 )(EditItemModal);
