@@ -65,3 +65,16 @@ export const updateParentItemChildren = (eventId, parentId, childId) => {
             });
     }
 }
+
+export const showEditItemModal = (itemId) => {
+    return {
+        type: actionTypes.SHOW_EDIT_ITEM_MODAL,
+        itemId
+    }
+}
+
+export const hideEditItemModal = () => {
+    return {
+        type: actionTypes.HIDE_EDIT_ITEM_MODAL
+    }
+}

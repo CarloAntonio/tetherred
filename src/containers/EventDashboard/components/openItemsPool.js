@@ -21,6 +21,7 @@ import RiseIcon from '@material-ui/icons/KeyboardArrowUp'
 // Custom Components
 import EventItem from './eventItem';
 import NewItemDialog from './newItemDialog';
+import EditItemModal from '../../../modals/editItemModal';
 
 // Utils
 import { getOwnerlessItems, getChildItems } from '../../../utils/filters';
@@ -172,9 +173,9 @@ class OpenItemsPool extends Component {
         return (
             <Paper className={classes.main}>
                 <div className='d-flex justify-content-center'>
-                    <p className='mb-0 py-4'>
+                    <h4 className='mb-0 py-4'>
                         {title}
-                    </p>
+                    </h4>
                 </div>
                                
                 <div className='d-flex justify-content-between'>
@@ -223,6 +224,8 @@ class OpenItemsPool extends Component {
                     showDialog={this.state.showNewItemDialog}
                     handleOpenNewItemDialog={this.handleOpenNewItemDialog}
                     handleCloseNewItemDialog={this.handleCloseNewItemDialog}/>
+
+                <EditItemModal/>
             </Paper>   
         )
     }

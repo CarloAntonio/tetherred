@@ -13,12 +13,13 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import red from '@material-ui/core/colors/red';
-import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Clear';
 import InspectIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
 
 // Actions
 import { diveIntoItem, changeFilterValue } from '../../../store/actions/eventActions';
+import { showEditItemModal } from '../../../store/actions/itemActions';
 
 
 const styles = theme => ({
@@ -85,15 +86,18 @@ class EventCard extends Component{
                     {nameArea}
                 </div>
                 <CardActions className={classes.actions} disableActionSpacing>
-                    <Tooltip title='Edit' aria-label='Edit'>
-                        <IconButton aria-label="Edit Card">
-                            <EditIcon />
+
+                    <Tooltip title='Details' aria-label='Details'>
+                        <IconButton 
+                            aria-label="Details Icon"
+                            onClick={() => this.props.showEditItemModal(itemDetails.id)}>
+                            <InspectIcon />
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title='Details' aria-label='Details'>
-                        <IconButton aria-label="Inspect Card">
-                            <InspectIcon />
+                    <Tooltip title='Delete' aria-label='Delete'>
+                        <IconButton aria-label="Delete Icon">
+                            <DeleteIcon />
                         </IconButton>
                     </Tooltip>
                     
@@ -118,6 +122,7 @@ const mapDispatchToProps = dispatch => {
     return {
         diveIntoItem: (item, itemId) => dispatch(diveIntoItem(item, itemId)),
         changeFilterValue: (filterValue) => dispatch(changeFilterValue(filterValue)),
+        showEditItemModal: (itemId) => dispatch(showEditItemModal(itemId))
     }
 }
 

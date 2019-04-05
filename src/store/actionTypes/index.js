@@ -18,3 +18,7 @@ export const CHANGE_FILTER_VALUE = 'CHANGE_FILTER_VALUE';
 // user actions
 export const GET_USER_MIN_DETAILS = 'GET_USER_MIN_DETAILS';
 export const GET_USER_PROFILE_URL = 'GET_USER_PROFILE_URL';
+
+// item actions
+export const SHOW_EDIT_ITEM_MODAL = 'SHOW_EDIT_ITEM_MODAL';
+export const HIDE_EDIT_ITEM_MODAL = 'HIDE_EDIT_ITEM_MODAL';
