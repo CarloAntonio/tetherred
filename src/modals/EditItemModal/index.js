@@ -21,8 +21,11 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import DiveIcon from '@material-ui/icons/KeyboardArrowDown'
 
+// Custom Components
+import OwnerSelector from './components/ownerSelector';
+
 // Actions
-import { hideEditItemModal } from '../store/actions/itemActions';
+import { hideEditItemModal } from '../../store/actions/itemActions';
 
 const styles = theme => ({
     button: {
@@ -35,16 +38,19 @@ class EditItemModal extends Component {
         name: '',
         details: '',
         owner: '',
-        children: []
+        children: [],
     }
 
     componentWillReceiveProps = nextProps => {
+
+        console.log(nextProps.targetItemOwner);
+        
         if(nextProps.targetItemDetails) {
             this.setState({
                 name: nextProps.targetItemDetails.name,
                 details: nextProps.targetItemDetails.details,
-                owner: nextProps.targetItemDetails.owner,
-                children: nextProps.targetItemChildren
+                owner: nextProps.targetItemOwner,
+                children: nextProps.targetItemChildren,
             })
         }
     }
@@ -65,6 +71,10 @@ class EditItemModal extends Component {
 
     handleSubItemDelete = () => {
         console.log("Deleting.... lol jk again")
+    }
+
+    handleChangeOwner = event => {
+        this.setState({ owner: event.target.value });
     }
 
     render() {
@@ -100,10 +110,9 @@ class EditItemModal extends Component {
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
-            </div>
+                </div>
             )
         })
-        
 
         let updatedAt = null;
         if(this.props.targetItemDetails) {
@@ -118,7 +127,10 @@ class EditItemModal extends Component {
                 <DialogTitle id="form-dialog-title">Item Details</DialogTitle>
     
                 <DialogContent>
-                    
+                    <DialogContentText>
+                        General
+                    </DialogContentText>
+
                     <TextField
                         onChange={this.handleChange}
                         value={this.state.name}
@@ -141,8 +153,22 @@ class EditItemModal extends Component {
                         variant="outlined"
                         fullWidth/>
 
-                    {subItems}
+                    <OwnerSelector
+                        owner={this.state.owner}
+                        handleChangeOwner={this.handleChangeOwner}/>
+                
+                </DialogContent>
 
+                <DialogContent>
+                    <DialogContentText>
+                        Child Items
+                    </DialogContentText>
+
+                    {subItems}
+    
+                </DialogContent>
+
+                <DialogContent>
                     <Typography>
                         Last Update By: {this.props.lastUpdatedBy ? <b>{this.props.lastUpdatedBy.displayName}</b> : <b>Unknown</b>}
                     </Typography>
@@ -150,7 +176,6 @@ class EditItemModal extends Component {
                     <Typography>
                         Last Update On: {updatedAt ? <b>{updatedAt}</b> : <b>Unknown</b>}
                     </Typography>
-    
                 </DialogContent>
     
                 <DialogActions>
@@ -186,11 +211,13 @@ const mapStateToProps = (state, ownProps) => {
     }
 
     let targetItemDetailsLastUpdatedBy = null;
+    let targetItemOwner = 'none';
     if(targetItemDetails 
         && state.user 
         && state.user.userMinDetails
         && state.user.userMinDetails[targetItemDetails.updatedBy]) {
-        targetItemDetailsLastUpdatedBy = state.user.userMinDetails[targetItemDetails.updatedBy]
+            if(targetItemDetails.owner !== 'none') targetItemOwner = state.user.userMinDetails[targetItemDetails.owner];
+            targetItemDetailsLastUpdatedBy = state.user.userMinDetails[targetItemDetails.updatedBy];
     }
 
     let targetItemChildren = [];
@@ -207,6 +234,7 @@ const mapStateToProps = (state, ownProps) => {
         showModal: state.item.showEditItemModal,
         targetItemDetails,
         targetItemChildren,
+        targetItemOwner,
         lastUpdatedBy: targetItemDetailsLastUpdatedBy,
     }
 }

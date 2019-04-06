@@ -21,7 +21,7 @@ import RiseIcon from '@material-ui/icons/KeyboardArrowUp'
 // Custom Components
 import EventItem from './eventItem';
 import NewItemDialog from './newItemDialog';
-import EditItemModal from '../../../modals/editItemModal';
+import EditItemModal from '../../../modals/EditItemModal';
 
 // Utils
 import { getOwnerlessItems, getChildItems } from '../../../utils/filters';
