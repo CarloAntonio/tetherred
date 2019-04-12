@@ -5,6 +5,9 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import dateFormat from 'dateformat';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
+import firebase from 'firebase';
+import shortid from 'shortid';
 
 // Material UI
 import { withStyles } from '@material-ui/core/styles';
@@ -19,13 +22,14 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import DiveIcon from '@material-ui/icons/KeyboardArrowDown'
+import DiveIcon from '@material-ui/icons/KeyboardArrowDown';
+import DoneIcon from '@material-ui/icons/Done';
 
 // Custom Components
 import OwnerSelector from './components/ownerSelector';
 
 // Actions
-import { hideEditItemModal } from '../../store/actions/itemActions';
+import { hideEditItemModal, addChildItemsFromEditItemModal } from '../../store/actions/itemActions';
 
 const styles = theme => ({
     button: {
@@ -35,20 +39,24 @@ const styles = theme => ({
 
 class EditItemModal extends Component {
     state = {
+        id: '',
         name: '',
         details: '',
+        category: '',
+        lastAction: '',
         owner: '',
         children: [],
+        newChildItem: ''
     }
 
     componentWillReceiveProps = nextProps => {
-
-        console.log(nextProps.targetItemOwner);
-        
         if(nextProps.targetItemDetails) {
             this.setState({
+                id: nextProps.targetItemId,
                 name: nextProps.targetItemDetails.name,
                 details: nextProps.targetItemDetails.details,
+                category: nextProps.targetItemDetails.category,
+                lastAction: nextProps.targetItemDetails.lastAction,
                 owner: nextProps.targetItemOwner,
                 children: nextProps.targetItemChildren,
             })
@@ -61,28 +69,52 @@ class EditItemModal extends Component {
         });
     }
 
+    handleInternalStateChildItemDelete = () => {
+        console.log("Deleting.... lol jk again")
+    }
+
+    handleInternalStateChildItemAdd = () => {
+        const updatedChildItems = _.cloneDeep(this.state.children);
+        const newChildItemData = {
+            data: {
+                category: this.state.category,
+                children: [],
+                lastAction: 'created',
+                name: this.state.newChildItem,
+                owner: 'none',
+                parent: this.state.id,
+                updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
+                updatedBy: this.props.currentUserId
+            },
+            id: shortid.generate(),
+            inFirestore: false
+        }
+
+        updatedChildItems.push(newChildItemData);
+
+        this.setState({ children: updatedChildItems, newChildItem: '' });
+    }
+
+    handleInternalStateChangeOwner = event => {
+        this.setState({ owner: event.target.value });
+    }
+
     handleSubmit = () => {
-        console.log("Submitting.... lol jk");
+        this.props.handleClose();
+        this.props.addChildItems(this.props.match.params.id, this.state.id, this.state);
     }
 
     handleDeleteItem = () => {
         console.log("Deleting Item.... lol jk")
     }
 
-    handleSubItemDelete = () => {
-        console.log("Deleting.... lol jk again")
-    }
-
-    handleChangeOwner = event => {
-        this.setState({ owner: event.target.value });
-    }
-
     render() {
         const { classes } = this.props;
 
         console.log(this.state);
+
         let subItems = [];
-        this.state.children.forEach(item => {
+        this.state.children.forEach((item, index) => {
             subItems.push(
                 <div className='d-flex' key={item.id}>
                     <TextField
@@ -90,22 +122,14 @@ class EditItemModal extends Component {
                         value={item.data.name}
                         margin="dense"
                         id={item.id}
-                        label="Sub Item Name"
+                        label="Child Item Name"
                         variant="outlined"
                         fullWidth/>
-                    <Tooltip title='Dive' aria-label='Dive' placement='top'>
-                        <IconButton 
-                            className={classes.button} 
-                            onClick={null}
-                            aria-label="Dive">
-                            <DiveIcon />
-                        </IconButton>
-                    </Tooltip>
                     
                     <Tooltip title='Delete' aria-label='Delete' placement='top'>
                         <IconButton 
                             className={classes.button} 
-                            onClick={this.handleSubItemDelete}
+                            onClick={() => this.handleInternalStateChildItemDelete()}
                             aria-label="Delete">
                             <DeleteIcon />
                         </IconButton>
@@ -148,7 +172,7 @@ class EditItemModal extends Component {
                         id="details"
                         label="Details"
                         multiline
-                        rows="3"
+                        rows="2"
                         margin="normal"
                         variant="outlined"
                         fullWidth/>
@@ -163,6 +187,26 @@ class EditItemModal extends Component {
                     <DialogContentText>
                         Child Items
                     </DialogContentText>
+
+                    <div className='d-flex'>
+                        <TextField
+                            onChange={this.handleChange}
+                            value={this.state.newChildItem}
+                            id='newChildItem'
+                            margin="dense"
+                            label="Add New Child"
+                            variant="outlined"
+                            fullWidth/>
+
+                        <Tooltip title='Add Child Item' aria-label='Add Child Item' placement='top'>
+                            <IconButton 
+                                className={classes.button} 
+                                onClick={this.handleInternalStateChildItemAdd}
+                                aria-label="Add Child Item">
+                                <DoneIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
 
                     {subItems}
     
@@ -202,12 +246,13 @@ const mapStateToProps = (state, ownProps) => {
     const id = ownProps.match.params.id;
 
     let targetItemDetails = null;
+    let targetItemId = null;
     if(state.firestore.data.eventAuxDetails 
         && state.firestore.data.eventAuxDetails[id] 
         && state.firestore.data.eventAuxDetails[id].items
         && state.item.editItemModalTargetId !== '') {
-        targetItemDetails = state.firestore.data.eventAuxDetails[id].items[state.item.editItemModalTargetId];
-
+            targetItemId = state.item.editItemModalTargetId
+            targetItemDetails = state.firestore.data.eventAuxDetails[id].items[state.item.editItemModalTargetId];
     }
 
     let targetItemDetailsLastUpdatedBy = null;
@@ -226,7 +271,8 @@ const mapStateToProps = (state, ownProps) => {
         && state.firestore.data.eventAuxDetails[id].items) {
             targetItemDetails.children.forEach(childItemId => targetItemChildren.push({
                 data: state.firestore.data.eventAuxDetails[id].items[childItemId],
-                id: childItemId
+                id: childItemId,
+                inFirestore: true
             }));
         }
 
@@ -235,13 +281,16 @@ const mapStateToProps = (state, ownProps) => {
         targetItemDetails,
         targetItemChildren,
         targetItemOwner,
+        targetItemId,
         lastUpdatedBy: targetItemDetailsLastUpdatedBy,
+        currentUserId: state.firebase.auth.uid
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         handleClose: () => dispatch(hideEditItemModal()),
+        addChildItems: (eventId, parentId, data) => dispatch(addChildItemsFromEditItemModal(eventId, parentId, data))
     }
 }
 

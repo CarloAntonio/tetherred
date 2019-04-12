@@ -48,6 +48,33 @@ export const addSubItems = (parentId, partsObject, eventId) => {
     }
 }
 
+export const addChildItemsFromEditItemModal = (eventId, parentId, data) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        data.children.forEach(childItem => {
+            if(childItem.inFirestore === false){
+                dispatch(addChildItem(eventId, parentId, childItem.data))
+            }
+        })
+    }
+}
+
+export const addChildItem = (eventId, parentId, childData) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .add(childData).then(doc => {
+                dispatch(updateParentItemChildren(eventId, parentId, doc.id))
+            }).catch(err => {
+                console.log(err);
+            });
+    }
+}
+
 export const updateParentItemChildren = (eventId, parentId, childId) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make asycnc all to database
