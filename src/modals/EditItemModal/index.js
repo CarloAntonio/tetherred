@@ -29,7 +29,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import OwnerSelector from './components/ownerSelector';
 
 // Actions
-import { hideEditItemModal, addChildItemsFromEditItemModal } from '../../store/actions/itemActions';
+import { hideEditItemModal, handleChildItemsFromEditItemModal } from '../../store/actions/itemActions';
 
 const styles = theme => ({
     button: {
@@ -69,8 +69,18 @@ class EditItemModal extends Component {
         });
     }
 
-    handleInternalStateChildItemDelete = () => {
-        console.log("Deleting.... lol jk again")
+    handleInternalStateChildItemDelete = (childItemId) => {
+        const updatedChildItems = _.cloneDeep(this.state.children);
+
+        for(let i = 0; i < updatedChildItems.length; i++){
+            if(updatedChildItems[i].id === childItemId) {
+                updatedChildItems[i].shouldDelete = true;
+                this.setState({
+                    children: updatedChildItems
+                });
+                break;
+            }
+        }
     }
 
     handleInternalStateChildItemAdd = () => {
@@ -87,7 +97,8 @@ class EditItemModal extends Component {
                 updatedBy: this.props.currentUserId
             },
             id: shortid.generate(),
-            inFirestore: false
+            inFirestore: false,
+            shouldDelete: false
         }
 
         updatedChildItems.push(newChildItemData);
@@ -101,7 +112,7 @@ class EditItemModal extends Component {
 
     handleSubmit = () => {
         this.props.handleClose();
-        this.props.addChildItems(this.props.match.params.id, this.state.id, this.state);
+        this.props.handleChildItems(this.props.match.params.id, this.state.id, this.state);
     }
 
     handleDeleteItem = () => {
@@ -111,31 +122,31 @@ class EditItemModal extends Component {
     render() {
         const { classes } = this.props;
 
-        console.log(this.state);
-
         let subItems = [];
-        this.state.children.forEach((item, index) => {
-            subItems.push(
-                <div className='d-flex' key={item.id}>
-                    <TextField
-                        disabled
-                        value={item.data.name}
-                        margin="dense"
-                        id={item.id}
-                        label="Child Item Name"
-                        variant="outlined"
-                        fullWidth/>
-                    
-                    <Tooltip title='Delete' aria-label='Delete' placement='top'>
-                        <IconButton 
-                            className={classes.button} 
-                            onClick={() => this.handleInternalStateChildItemDelete()}
-                            aria-label="Delete">
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
-                </div>
-            )
+        this.state.children.forEach(item => {
+            if(!item.shouldDelete){
+                subItems.push(
+                    <div className='d-flex' key={item.id}>
+                        <TextField
+                            disabled
+                            value={item.data.name}
+                            margin="dense"
+                            id={item.id}
+                            label="Child Item Name"
+                            variant="outlined"
+                            fullWidth/>
+                        
+                        <Tooltip title='Delete' aria-label='Delete' placement='top'>
+                            <IconButton 
+                                className={classes.button} 
+                                onClick={() => this.handleInternalStateChildItemDelete(item.id)}
+                                aria-label="Delete">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                )
+            }
         })
 
         let updatedAt = null;
@@ -272,7 +283,8 @@ const mapStateToProps = (state, ownProps) => {
             targetItemDetails.children.forEach(childItemId => targetItemChildren.push({
                 data: state.firestore.data.eventAuxDetails[id].items[childItemId],
                 id: childItemId,
-                inFirestore: true
+                inFirestore: true,
+                shouldDelete: false
             }));
         }
 
@@ -290,7 +302,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         handleClose: () => dispatch(hideEditItemModal()),
-        addChildItems: (eventId, parentId, data) => dispatch(addChildItemsFromEditItemModal(eventId, parentId, data))
+        handleChildItems: (eventId, parentId, data) => dispatch(handleChildItemsFromEditItemModal(eventId, parentId, data))
     }
 }
 

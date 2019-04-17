@@ -37,7 +37,7 @@ export const getParentItem = (childItem, allItems) => {
 export const getOwnerlessItems = allItems => {
     const ownerlessItems = []
     Object.keys(allItems).map(itemKey => {
-        if(allItems[itemKey].owner === 'none' || allItems[itemKey].owner === 'shared') {
+        if(allItems[itemKey] && (allItems[itemKey].owner === 'none' || allItems[itemKey].owner === 'shared')) {
             let rootParentItem = 'none';
             let parentItem = 'none';
             if(allItems[itemKey].parent !== 'none') {
@@ -65,7 +65,7 @@ export const getOwnerlessItems = allItems => {
 export const getUserItems = (allItems, uid) => {
     const userItems = [];
     Object.keys(allItems).map(itemKey => {
-        if(allItems[itemKey].owner === uid) {
+        if(allItems[itemKey] && allItems[itemKey].owner === uid) {
             let rootParentItem = 'none';
             let parentItem = 'none';
             if(allItems[itemKey].parent !== 'none') {
@@ -89,7 +89,7 @@ export const getChildItems = (allItems, parentItem) => {
     parentItem.children.forEach(childItemKey => {
         let rootParentItem = 'none';
         let parentItem = 'none';
-        if(allItems[childItemKey].parent !== 'none') {
+        if(allItems[childItemKey] && allItems[childItemKey].parent !== 'none') {
             rootParentItem = getRootParentItem(allItems[childItemKey], allItems);
             parentItem = getParentItem(allItems[childItemKey], allItems);
         }

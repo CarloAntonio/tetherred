@@ -48,11 +48,14 @@ export const addSubItems = (parentId, partsObject, eventId) => {
     }
 }
 
-export const addChildItemsFromEditItemModal = (eventId, parentId, data) => {
+export const handleChildItemsFromEditItemModal = (eventId, parentId, data) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         data.children.forEach(childItem => {
             if(childItem.inFirestore === false){
                 dispatch(addChildItem(eventId, parentId, childItem.data))
+            }
+            if(childItem.shouldDelete === true){
+                dispatch(deleteChildItem(eventId, parentId, childItem.id))
             }
         })
     }
@@ -75,6 +78,25 @@ export const addChildItem = (eventId, parentId, childData) => {
     }
 }
 
+export const deleteChildItem = (eventId, parentId, childId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .doc(childId)
+            .delete()
+            .then(() => {
+                dispatch(deleteChildItemFromParent(eventId, parentId, childId))
+            }).catch(err => {
+                console.log(err);
+            });
+    }
+}
+
 export const updateParentItemChildren = (eventId, parentId, childId) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         //make asycnc all to database
@@ -86,7 +108,25 @@ export const updateParentItemChildren = (eventId, parentId, childId) => {
             .collection('items')
             .doc(parentId)
             .update({
-                children: firestore.FieldValue.arrayUnion(childId)
+                children: firestore.FieldValue.arrayUnion(childId),
+            }).catch(err => {
+                console.log(err);
+            });
+    }
+}
+
+export const deleteChildItemFromParent = (eventId, parentId, childId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        //make asycnc all to database
+        const firestore = getFirestore();
+
+        firestore
+            .collection('eventAuxDetails')
+            .doc(eventId)
+            .collection('items')
+            .doc(parentId)
+            .update({
+                children: firestore.FieldValue.arrayRemove(childId),
             }).catch(err => {
                 console.log(err);
             });
