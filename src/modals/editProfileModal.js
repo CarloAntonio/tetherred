@@ -73,9 +73,8 @@ class EditProfileModal extends Component {
     }
 
     handleSubmit = () => {
-        console.log('SUbmitting')
-        // this.props.createEvent(this.state);
-        // this.props.handleHideCreateEventModal();
+        this.props.createEvent(this.state);
+        this.props.handleHideCreateEventModal();
     }
 
     render() {

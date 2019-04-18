@@ -1,7 +1,8 @@
 // Libraries
 import React, { Component} from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux'
+import { compose } from 'redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -17,10 +18,12 @@ import DeleteIcon from '@material-ui/icons/Clear';
 import InspectIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
 
+// Custom Components
+import DeleteItemModal from '../../../modals/deleteItemModal';
+
 // Actions
 import { diveIntoItem, changeFilterValue } from '../../../store/actions/eventActions';
 import { showEditItemModal } from '../../../store/actions/itemActions';
-
 
 const styles = theme => ({
     card: {
@@ -51,6 +54,17 @@ const styles = theme => ({
 });
 
 class EventCard extends Component{
+    state = {
+        showDeleteItemModal: false
+    }
+
+    handleShowDeleteItemModal = () => {
+        this.setState({ showDeleteItemModal: true })
+    }
+
+    handleHideDeleteItemModal = () => {
+        this.setState({ showDeleteItemModal: false })
+    }
 
     handleDive = (data, id) => {
         this.props.diveIntoItem(data, id);
@@ -96,7 +110,10 @@ class EventCard extends Component{
                     </Tooltip>
 
                     <Tooltip title='Delete' aria-label='Delete'>
-                        <IconButton aria-label="Delete Icon">
+                        <IconButton 
+                            aria-label="Delete Icon"
+                            onClick={this.handleShowDeleteItemModal}
+                            >
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
@@ -109,6 +126,13 @@ class EventCard extends Component{
                         </h5>
                     </Tooltip>
                 </CardActions>
+
+                <DeleteItemModal
+                    eventId={this.props.match.params.id}
+                    parentId={itemDetails.parentItemId}
+                    itemDetails={itemDetails}
+                    showDeleteItemModal={this.state.showDeleteItemModal}
+                    handleHideDeleteItemModal={this.handleHideDeleteItemModal}/>
             </Card>
         )
     }
@@ -122,11 +146,12 @@ const mapDispatchToProps = dispatch => {
     return {
         diveIntoItem: (item, itemId) => dispatch(diveIntoItem(item, itemId)),
         changeFilterValue: (filterValue) => dispatch(changeFilterValue(filterValue)),
-        showEditItemModal: (itemId) => dispatch(showEditItemModal(itemId))
+        showEditItemModal: (itemId) => dispatch(showEditItemModal(itemId)),
     }
 }
 
 export default compose(
+    withRouter,
     withStyles(styles),
     connect(null, mapDispatchToProps)
 )(EventCard);
